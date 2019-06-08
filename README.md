@@ -40,5 +40,11 @@ It is a good practice to add a query string to the end of the `start_url` field 
 }
 ```
 
+## Change the theme color
+
+Change the `theme_color` field in `manifest.json` file to `#387ef5`.
+
+Update the value of the meta named `theme-color` in your `index.html` to `#387ef5`.  
+
 ## Good to go 🎯
 Now you can continue to Step 3 -> [Add meta tags for icons and splash screens](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md). 
