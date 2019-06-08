@@ -16,12 +16,14 @@ Since we depend on Angular CLI and some other tools which are not available for 
 - node.js > 8.0.0 & npm > 5.2.0 - [Download](https://nodejs.org/en/)
 - Open a Firebase Account (FREE) - [Download](https://firebase.google.com/)
 - GIT - [Download](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- Clone this repo - Run `git clone https://github.com/onderceylan/pwa-workshop-angular-firebase`
+- Run `npm i`
 
 ## Table of Contents
 
-1. [Getting Started](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md)
-2. [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md)
-3. [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md)
+1. [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md)
+2. [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md)
+3. [Add meta tags for icons and splash screens](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md)
 4. [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md)
 5. [Add asset groups for app shell and icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-5/README.md)
 6. [Add data group for conference data](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-6/README.md)

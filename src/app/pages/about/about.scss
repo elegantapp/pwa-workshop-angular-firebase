@@ -1,0 +1,24 @@
+.about-header {
+  background-color: var(--ion-color-dark);
+  padding: 16px;
+  width: 100%;
+  height: 30%;
+  text-align: center;
+}
+
+.about-header img {
+  max-height: 100%;
+}
+
+.about-info p {
+  color: var(--ion-color-dark);
+  text-align: left;
+}
+
+.about-info ion-icon {
+  margin-inline-end: 32px;
+}
+
+.ios .about-info {
+  text-align: center;
+}
