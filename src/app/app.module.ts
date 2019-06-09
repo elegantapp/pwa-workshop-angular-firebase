@@ -15,7 +15,7 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('main-sw.js', { enabled: environment.production }),
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
