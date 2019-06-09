@@ -62,7 +62,7 @@ Simply create a new file in `/src/sw` folder with the name `firebase-messaging-s
 
 Once you're done with the instructions, you can test it by building the app for production. 
 
-Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
+Run `npm run build:serve` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
 
 You need to see `main-sw.js` as the registered service worker on your app. Inspect the sw, put a break point in it and inspect the `self` object in your console.
 
