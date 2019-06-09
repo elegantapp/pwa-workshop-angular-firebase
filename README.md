@@ -2,7 +2,7 @@
 
 Welcome to the workshop of building a production ready Progressive Web App based on Angular, Ionic and Firebase.
 
-The workshop is consist of 10 steps of producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/blob/master/) into a PWA and deploying it to Firebase.
+The workshop is consist of 10 steps of producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/) into a PWA and deploying it to Firebase.
 
 The end application is purely a kitchen-sink demo of a PWA based on the Ionic Framework and Angular.
 
@@ -14,7 +14,7 @@ Since we depend on Angular CLI and some other tools which are not available for 
 
 - Google Chrome - [Download](https://www.google.com/chrome/)
 - node.js > 8.0.0 & npm > 5.2.0 - [Download](https://nodejs.org/en/)
-- Open a Firebase Account (FREE) - [Download](https://firebase.google.com/)
+- Open a Firebase Account (FREE) - [Link](https://firebase.google.com/)
 - GIT - [Download](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - Clone this repo - Run `git clone https://github.com/onderceylan/pwa-workshop-angular-firebase`
 - Run `npm i`
