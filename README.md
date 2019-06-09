@@ -72,5 +72,10 @@ Add the following code to the `index.html` file of your PWA.
 
 > Keep an eye on WebKit Feature Status for tracking the progress of the implementation of web standards. For instance; once Web App Manifest specs is implemented on WebKit, you won’t need to use the custom meta tags above anymore. Track the progress here: https://webkit.org/status/#?search=manifest
 
+## Update angular.json
+
+Change the path in the `ngswConfigPath` config in `angular.json` file from `/ngsw-config.json` to `ngsw-config.json`.
+Test the production build by running `npm run build -- --prod`. If no error shows up, continue.
+
 ## Good to go 🎯
 Now you can continue to Step 4 -> [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md). 
