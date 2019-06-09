@@ -1,87 +1,71 @@
-# Step 6
+# Step 7
 
-In this step, we're going to configure `ngsw-config.json` file based on [Angular's NGSW docs](https://angular.io/guide/service-worker-config). We'll define a cache strategy for our application's data resources.
+As of today, Angular service worker — aka NGSW doesn't support the composition of another service worker. This means that you cannot extend Angular service worker's default behaviour and add your own flavour to it.
 
-## Understanding data groups in NGSW architecture
+You can try and edit automatically generated `ngsw-worker.js` service worker file in your dist folder, but every time you build your application for production, this file will be overridden by Angular. 
 
-> Unlike asset resources, data requests are not versioned along with the app. They're cached according to manually-configured policies that are more useful for situations such as API requests and other data dependencies.
-> 
-> — [Angular docs](https://angular.io/guide/service-worker-config#datagroups)
+This architecture may introduce a problem if you plan to do more than what Angular service worker offers to you. No worries though, there is a nice workaround to tackle this issue.
 
-Data groups follow this Typescript interface:
+We're going to look into one of the workarounds to extend NGSW and we will import an external service worker file in addition to Angular's. 
 
-```typescript
-export interface DataGroup {
-  name: string;
-  urls: string[];
-  version?: number;
-  cacheConfig: {
-    maxSize: number;
-    maxAge: string;
-    timeout?: string;
-    strategy?: 'freshness' | 'performance';
-  };
-}
+## Introducing our own service worker file
+
+We're going to introduce a new service worker file, say `main-sw.js` to our Angular app and import automatically generated NGSW within our new service worker.
+
+* Create a new folder in `/src` with the name `sw`
+* Create a new file in `/src/sw` with the name `main-sw.js`
+* Add the following import to your `main-sw.js` file;
+
+```javascript
+importScripts('ngsw-worker.js');
 ```
 
-What I would like to stress here is, the caching strategies for data resources. Angular service worker is designed with brevity in mind, therefore it provides 2 caching strategies.
+### Add the asset rule to angular.json
 
-### Caching strategy: Performance
+Since we introduced a new JS file that is out of the scope of NGSW and Angular, we need to change the build configuration of our app to make sure our new sw file will be in the build output.
 
-> Suitable for resources that don’t change often; for example, user avatar images.
->
-> — [Angular docs](https://angular.io/guide/service-worker-config#strategy)
-
-![Performance strategy](https://cdn-images-1.medium.com/max/1600/1*tQBcZt0HlpnrbHz9KxAFEg.png)
-
-`performance`, the default, optimizes for responses that are as fast as possible. If a resource exists in the cache, the cached version is used. This allows for some staleness, depending on the `maxAge`, in exchange for better performance. This is suitable for resources that don't change often; for example, user avatar images.
-
-### Caching strategy: Freshness
-
-> Useful for resources that change frequently; for example, account balances.
->
-> — [Angular docs](https://angular.io/guide/service-worker-config#strategy)
-
-![Freshness strategy](https://cdn-images-1.medium.com/max/1600/1*I6rc4R5HBixBdZbRpwZBCw.png)
-
-`freshness`, optimizes for currency of data, preferentially fetching requested data from the network. Only if the network times out, according to `timeout`, does the request fall back to the cache.
-
-## Add data group for conference data
-
-Our app uses a static data source that is located at `/assets/data/data.json`. 
-
-We're going to introduce a data group with a `performance` cache strategy as this data source does not change often.
-
-Add the following section to the `ngsw-config.json` file;
+* Open `angular.json`
+* Add the following JSON object to the `assets` array located at L:18; 
 
 ```json
 {
-  "dataGroups": [
-    {
-      "name": "conf-data",
-      "version": 1,
-      "urls": ["/assets/data/data.json"],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 10,
-        "maxAge": "3h",
-        "timeout": "3s"
-      }
-    }
-  ]
+  "glob": "**/*-sw.js",
+  "input": "src/sw",
+  "output": "/"
 }
 ```
 
-With the example above, data received from a static json file, will be cached with a performance strategy for a maximum of 10 responses, maximum cache age of 3 hour, and a timeout of 3 seconds, after which the result will fallback to the cache. 
+This config will copy any file matching the glob pattern to the `www` output folder.
 
-> `performance` is a `cache-first` strategy, and alternatively you can use `freshness` as a `network-first` strategy.
+### Update the SW path in app module
+
+If you remember from Step 1, when we added the `@angular/pwa` schematic, Angular modified our `app.module.ts` file with a fixed path of SW to register it to ServiceWorkerModule.
+
+Since we introduced a new service worker file, we need to change the fixed path in `angular.module.ts` to `main-sw.js`.
+
+* Open `src/app/app.module.ts`
+* Change the service worker path to `main-sw.js` as below
+
+```javascript
+ServiceWorkerModule.register('main-sw.js', { enabled: environment.production })
+```
+
+### BONUS: Push Notifications
+
+The idea of extending the NGSW is to be free with native service worker implementation, enabling us to interact with various Web APIs.
+
+One of those APIs is Web Push Notification API. **We will not cover push notifications during this workshop due to time limitation.** However, you can introduce them later via Firebase Cloud Messaging by following the instructions on [documentation here](https://firebase.google.com/docs/cloud-messaging/js/receive#handle_messages_when_your_web_app_is_in_the_foreground).
+
+Simply create a new file in `/src/sw` folder with the name `firebase-messaging-sw.js` as it's described in docs and continue with further steps. Our adjusted build setup is compatible with all the modifications you need to do for introducing push notifications. 
 
 ## Test the results
 
-Once you're done with changing the config file, you can test it by building the app for production. 
+Once you're done with the instructions, you can test it by building the app for production. 
 
 Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
 
+You need to see `main-sw.js` as the registered service worker on your app. Inspect the sw, put a break point in it and inspect the `self` object in your console.
+
 ## Good to go 🎯
 
-Now you can continue to Step 7 -> [Add data group for conference data]([Extend NGSW](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-7/README.md)). 
+Now you can continue to Step 8 -> [Update PWA](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-8/README.md) 
