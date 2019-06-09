@@ -7,6 +7,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --prod",
+    "server": "npx superstatic www --port 8080 --host 127.0.0.1",
+    "build:serve": "npm run build:prod",
+    "postbuild:serve": "npm run server",
     "lint": "ng lint",
     "resources": "node resources/generate-resources.js"
   },
@@ -46,6 +50,7 @@
     "codelyzer": "^4.4.4",
     "firebase-tools": "^6.11.0",
     "puppeteer": "^1.17.0",
+    "superstatic": "^6.0.4",
     "ts-node": "8.1.0",
     "tslint": "^5.16.0",
     "typescript": "~3.2.4"
