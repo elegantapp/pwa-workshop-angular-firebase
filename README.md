@@ -1,92 +1,144 @@
-# Step 4
+# Step 5
 
-## Display A2HS on iOS
+In this step, we're going to configure `ngsw-config.json` file based on [Angular's NGSW docs](https://angular.io/guide/service-worker-config). We'll define a cache strategy for our application shell and other static assets.
 
-Google Chrome automatically detects a PWA on Android systems and if the site meets the [add to home screen criteria](https://developers.google.com/web/fundamentals/app-install-banners/#criteria), it shows an [install banner or mini info bar](https://developers.google.com/web/updates/2018/06/a2hs-updates) to the user to allow them adding it to their home screen.
+## Understanding asset groups in NGSW architecture
 
-![A2HS Popup on Android](https://cdn-images-1.medium.com/max/1600/0*i0LfXaT1VuddsPB8.png) 
+> Assets are resources that are part of the app version that update along with the app. They can include resources loaded from the page’s origin as well as third-party resources loaded from CDNs and other external URLs.
+> 
+> — [Angular docs](https://angular.io/guide/service-worker-config#assetgroups)
 
-Such functionality does not exist on iOS. But, luckily we can build our own UX to guide users towards the required taps to help them add your app to their home screens.
-
-## Display a banner with A2HS message to the users 
-
-We're going to display a toast banner to the users on iOS, to remind them they can install the PWA by adding it to the home screen.
-
-![A2HS Popup on Android](https://cdn-images-1.medium.com/max/1600/0*XMMa7gwBkG7auHi5.png) 
-
-### Check if user is on iOS
-
-We only want to display this message to the users on iOS platform as Android platform handles it automatically. You can use the following function to detect a device using iOS;
-
-```javascript
-const isIos = () => {
-  return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-};
-```
-
-### Check if app is in standalone mode
-
-We don't want to display this message if user has already added the app to their home screen. We can accomplish this by asserting `window.navigator.standalone`.
-
-You can use the following function to detect if app is launched from the home screen;
+Asset groups follow the Typescript interface shown here:
 
 ```typescript
-const isInStandaloneMode = () => ('standalone' in (window as any).navigator) && ((window as any).navigator.standalone);
-```
-
-### Show the banner to the users only once
-
-We don't want to disturb our users by showing the same banner over and over again on every visit. We need to get a global state of `isBannerShown` and show the A2HS message only if it's not shown yet.
-
-You can use the following function to detect if app is launched from the home screen;
-
-```javascript 
-import { Storage } from '@ionic/storage';
-const isBannerShown = await this.storage.get('isBannerShown');
-```
-
-You also need to set this value when you show the message;
-
-```javascript
-import { Storage } from '@ionic/storage';
-this.storage.set('isBannerShown', true);
-```
-
-### Display the banner with a message
-
-We can use `ToastController` of Ionic for displaying the message. Simply open `app.component.ts` file and inject `ToastController` from `@ionic/angular` to your component.
-
-Create a new function called showIosInstallBanner and do all the checks mentioned above. Then display the message by calling toast controller as the example below;
-
-```javascript
-import { ToastController } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
-
-// Inject ToastController and Storage to the constructor
-
-async ngOnInit() {
-  // The rest of ngOnInit
-  await this.showIosInstallBanner();
+interface AssetGroup {
+  name: string;
+  installMode?: 'prefetch' | 'lazy';
+  updateMode?: 'prefetch' | 'lazy';
+  resources: {
+    files?: string[];
+    urls?: string[];
+  };
 }
+```
 
-async showIosInstallBanner() {
-  // Put the functions for assertion here
-  
-  if (isIos() && !isInStandaloneMode() && isBannerShown == null) {
-    const toast = await this.toastController.create({
-      showCloseButton: true,
-      closeButtonText: 'OK',
-      cssClass: 'your-class-here-if-need-to-customize',
-      position: 'bottom',
-      message: `To install the app, tap "Share" icon below and select "Add to Home Screen".`,
-    });
-    toast.present();
-    this.storage.set('isBannerShown', true);
+Depending on the policy by which they are cached, you can introduce either `lazy` or `prefetch` strategy on each of your asset group. Resources on service worker configuration accept [glob-like patterns](https://angular.io/guide/service-worker-config#glob-patterns) that match a number of files, like;
+
+```json
+{
+  "assetGroups": [
+    {
+      "name": "shell",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/*.css",
+          "/vendor.*.js",
+          "/runtime.*.js",
+          "!/*-sw.js"
+        ]
+      }
+    }
+  ]
+}
+```
+
+## Add asset group for app shell
+
+### App shell model
+
+> An application shell (or app shell) architecture is one way to build a Progressive Web App that reliably and instantly loads on your users' screens, similar to what you see in native applications.
+>  
+> The app "shell" is the minimal HTML, CSS and JavaScript required to power the user interface and when cached offline can ensure instant, reliably good performance to users on repeat visits. This means the application shell is not loaded from the network every time the user visits. Only the necessary content is needed from the network.
+> 
+> — [The App Shell Model on Web Fundamentals](https://developers.google.com/web/fundamentals/architecture/app-shell)
+
+![Application Shell Model](https://developers.google.com/web/fundamentals/architecture/images/appshell.png)
+
+For a typical minimal app shell, devices load `index.html`, layout css files, vendor and app JS files and some more static assets like `favicon`. We need to determine which files of our application shell are required to be cached on `prefetch`.
+
+### Add app shell asset group to ngsw-config.json
+
+Run `npm run build -- --prod` and observe the output to see which files can be cached for the app shell. In addition, navigate to `www` output folder of the project and observe the static assets that should be part of app shell over there.
+
+Open `ngsw-config.json` file and extend the following config;
+
+```json
+{
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    }
+  ]
+}
+```
+
+* Rename the cache name `app` to `appshell`.
+* Add `/vendor.*.js`, `/common.*.js`, `/main.*.js`, `/runtime.*.js`, `/*polyfills.*.js` globs to files array.
+* Rename `/*.css` glob to `/styles.*.css` in files array.
+* Remove `/*.js` from files array.
+
+## Add asset group for lazy loaded Angular modules
+
+After observing the output in `www` folder, you might have noticed that there are many JS files like `1.ab41d3de4a68c5501412.js`. These files are lazy loaded modules of the app.
+
+We're going to introduce another asset group with a different cache strategy - `lazy` to handle lazy loaded modules.
+
+Add the following asset group to `assetGroups` array of `ngsw-config.json` file;
+
+```json
+{
+  "name": "modules",
+  "installMode": "lazy",
+  "updateMode": "prefetch",
+  "resources": {
+    "files": [
+      "/*.js",
+      "!/vendor.*.js",
+      "!/common.*.js",
+      "!/main.*.js",
+      "!/runtime.*.js",
+      "!/*polyfills.*.js"
+    ]
   }
 }
 ```
 
-You can test displaying the message on your local dev env by temporarily removing `isIos() && !isInStandaloneMode()`. When you see the message, put the removed expressions back and continue.  
+By doing this, we exclude the JS files that we've declared as part of our `appshell` asset group but match all other files with .js extension.
+
+## Add asset group for icons
+
+We also need to introduce an additional asset group for caching image assets. Open `ngsw-config.json` file and add the following asset group;
+
+```json
+{
+  "name": "assets",
+  "installMode": "lazy",
+  "updateMode": "prefetch",
+  "resources": {
+    "files": [
+      "/assets/**/*.(svg|jpg|png|webp|gif)",
+      "/svg/**"
+    ]
+  }
+}
+```
+
+## Test the results
+
+Once you're done with changing the config file in any of the steps, you can test it by building the app for production. 
+
+Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
 
 ## Good to go 🎯
-Now you can continue to Step 5 -> [Add asset groups for app shell and icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-5/README.md). 
+Now you can continue to Step 6 -> [Add data group for conference data](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-6/README.md). 
