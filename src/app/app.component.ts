@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, MenuController, ToastController } from '@ionic/angular';
+import { AlertController, Events, MenuController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { UserData } from './providers/user-data';
+import { SwUpdate, UpdateAvailableEvent } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
@@ -42,12 +43,41 @@ export class AppComponent implements OnInit {
     private storage: Storage,
     private userData: UserData,
     private toastController: ToastController,
+    private swUpdate: SwUpdate,
+    private alertController: AlertController,
   ) {}
 
   async ngOnInit() {
     this.checkLoginStatus();
     this.listenForLoginEvents();
     await this.showIosInstallBanner();
+    this.handleAppUpdate();
+  }
+
+  handleAppUpdate() {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.available.subscribe(async (event: UpdateAvailableEvent) => {
+        const alert = await this.alertController.create({
+          header: `App update!`,
+          message: `Newer version - v${((event.available.appData) as any).version} is available.
+                    Change log: ${((event.available.appData) as any).changelog}`,
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary',
+            }, {
+              text: 'Refresh',
+              handler: () => {
+                window.location.reload();
+              },
+            },
+          ],
+        });
+
+        await alert.present();
+      });
+    }
   }
 
   async showIosInstallBanner() {
