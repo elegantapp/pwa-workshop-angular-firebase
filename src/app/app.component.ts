@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, MenuController } from '@ionic/angular';
+import { Events, MenuController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { UserData } from './providers/user-data';
 
@@ -41,11 +41,39 @@ export class AppComponent implements OnInit {
     private router: Router,
     private storage: Storage,
     private userData: UserData,
+    private toastController: ToastController,
   ) {}
 
   async ngOnInit() {
     this.checkLoginStatus();
     this.listenForLoginEvents();
+    await this.showIosInstallBanner();
+  }
+
+  async showIosInstallBanner() {
+    // Detects if device is on iOS
+    const isIos = () => {
+      return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    };
+
+    // Detects if device is in standalone mode
+    const isInStandaloneMode = () => ('standalone' in (window as any).navigator) && ((window as any).navigator.standalone);
+
+    // Show the banner once
+    const isBannerShown = await this.storage.get('isBannerShown');
+
+    // Checks if it should display install popup notification
+    if (isIos() && !isInStandaloneMode() && isBannerShown == null) {
+      const toast = await this.toastController.create({
+        showCloseButton: true,
+        closeButtonText: 'OK',
+        cssClass: 'custom-toast',
+        position: 'bottom',
+        message: `To install the app, tap "Share" icon below and select "Add to Home Screen".`,
+      });
+      toast.present();
+      this.storage.set('isBannerShown', true);
+    }
   }
 
   checkLoginStatus() {
