@@ -84,4 +84,4 @@ Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an htt
 
 ## Good to go 🎯
 
-Now you can continue to Step 7 -> [Add data group for conference data]([Extend NGSW](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-7/README.md)). 
+Now you can continue to Step 7 -> [Extend NGSW](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-7/README.md). 
