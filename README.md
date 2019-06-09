@@ -51,7 +51,9 @@ Although many browsers adopted the [Web App Manifest spec](https://w3c.github.io
 
 We need to add a special type of non-standard meta tag - [see here](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html) - in order to have our PWAs on iOS to display splash screen.
 
-In order to add splash screen to your PWA on iOS, we must add a meta tag that points out an image for a specific resolution. If the size of an image in the meta tag matches with the device’s resolution, iOS will show the image as a splash screen. 
+In order to add splash screen to your PWA on iOS, we must add a meta tag that points out an image for a specific resolution. If the size of an image in the meta tag matches with the device’s resolution, iOS will show the image as a splash screen.
+
+![Static launch screen images](https://cdn-images-1.medium.com/max/1600/1*hKRjSlhCNrFMo0ut_O9RBg.png) 
 
 You need to create static images in different sizes for different devices. Here’s a list of devices and their resolutions: https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/launch-screen/#static-launch-screen-images-not-recommended 
 
