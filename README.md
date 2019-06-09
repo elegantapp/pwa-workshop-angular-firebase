@@ -88,5 +88,11 @@ Add the following meta tag to your index.html file;
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 ```
 
+## Test the results
+
+Once you're done with the instructions, you can test it by building the app for production. 
+
+Run `npm run build:serve` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the web app manifest with the new logos.
+
 ## Good to go 🎯
 Now you can continue to Step 4 -> [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md). 
