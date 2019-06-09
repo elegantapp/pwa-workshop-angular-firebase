@@ -88,10 +88,5 @@ async showIosInstallBanner() {
 
 You can test displaying the message on your local dev env by temporarily removing `isIos() && !isInStandaloneMode()`. When you see the message, put the removed expressions back and continue.  
 
-## Update angular.json
-
-Change the path in the `ngswConfigPath` config in `angular.json` file from `/ngsw-config.json` to `ngsw-config.json`.
-Test the production build by running `npm run build -- --prod`. If no error shows up, continue.
-
 ## Good to go 🎯
 Now you can continue to Step 5 -> [Add asset groups for app shell and icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-5/README.md). 
