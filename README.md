@@ -33,7 +33,7 @@ Please take a look at your local diff by running `git status` and `git diff`.
 ## Update angular.json
 
 Change the path in the `ngswConfigPath` config in `angular.json` file from `/ngsw-config.json` to `ngsw-config.json`.
-Test the production build by running `npm run build -- --prod`. If no error shows up, continue.
+Test the production build by running `npm run build:prod`. If no error shows up, continue.
 
 ## Good to go 🎯
 Now you can continue to Step 2 -> [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md). 
