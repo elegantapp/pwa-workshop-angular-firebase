@@ -138,7 +138,7 @@ We also need to introduce an additional asset group for caching image assets. Op
 
 Once you're done with changing the config file in any of the steps, you can test it by building the app for production. 
 
-Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
+Run `npm run build:serve` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
 
 ## Good to go 🎯
 Now you can continue to Step 6 -> [Add data group for conference data](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-6/README.md). 
