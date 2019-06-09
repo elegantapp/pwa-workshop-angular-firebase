@@ -80,7 +80,7 @@ With the example above, data received from a static json file, will be cached wi
 
 Once you're done with changing the config file, you can test it by building the app for production. 
 
-Run `npm run build -- --prod` and run `npx http-server ./www` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
+Run `npm run build:serve` to spin off an http server for your production build. Open `http://127.0.0.1:8080` in your browser to inspect the app.
 
 ## Good to go 🎯
 
