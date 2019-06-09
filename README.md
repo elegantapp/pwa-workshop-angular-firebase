@@ -72,5 +72,19 @@ Add the following code to the `index.html` file of your PWA.
 
 > Keep an eye on WebKit Feature Status for tracking the progress of the implementation of web standards. For instance; once Web App Manifest specs is implemented on WebKit, you won’t need to use the custom meta tags above anymore. Track the progress here: https://webkit.org/status/#?search=manifest
 
+## Add meta tags for the status bar on iOS
+
+You can customize iOS status bar of your PWA by using `apple-mobile-web-app-status-bar-style` meta tag in your index.html file. This meta tag has no effect unless you specify full-screen mode aka standalone for your PWA.
+
+View of the status bars; `black-translucent`, `white`, and `black`;
+
+![View of the status bars](https://cdn-images-1.medium.com/max/1600/1*DmaoahB1qXMpZgt2X2gq9Q.png)
+
+Add the following meta tag to your index.html file;
+
+```html
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+```
+
 ## Good to go 🎯
 Now you can continue to Step 4 -> [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md). 
