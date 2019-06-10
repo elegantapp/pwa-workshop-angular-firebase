@@ -84,6 +84,8 @@ handleAppUpdate() {
 
 In order to simulate an app update, follow the instructions below;
 
+* Serve the app with running `npm run server`.
+* Open your app by navigating to `http://127.0.0.1:8080`.
 * Make sure that `Update on reload` option at Application -> Service Worker panel in Chrome's Web Inspector, is not selected.
 * Simulate an app update by modifying `ngsw-config.json` file. Increase the version in app data and add a change log message.
 
@@ -95,7 +97,6 @@ In order to simulate an app update, follow the instructions below;
   }
 }
 ```
-* Serve the app with running `npm run server`.
 * Rebuild your app with running `npm run build:prod` while you have the app open on Chrome, and while serving the app already with `npm run server`.
 * Refresh you tab and you need to see a new service worker waiting for an update in web inspector and also an alert popup in your app. 
 
