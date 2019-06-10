@@ -1,5 +1,9 @@
 {
   "index": "/index.html",
+  "appData": {
+    "version": "1.0.0",
+    "changelog": "Initial release"
+  },
   "assetGroups": [
     {
       "name": "appshell",
