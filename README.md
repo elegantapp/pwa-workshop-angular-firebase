@@ -89,7 +89,7 @@ In order to simulate an app update, follow the instructions below;
 
 ```json
 {
-  appData": {
+  "appData": {
     "version": "1.0.1",
     "changelog": "Added foo:bar feature"
   }
