@@ -1,104 +1,131 @@
-# Step 8
+# Step 9
 
-A service worker is the backbone of a Progressive Web App. And, updating a PWA always starts at its service worker. Browsers regularly check attached service worker of a client app for a byte difference and once service worker file is updated, the browser automatically initializes an update process.
+Firebase is built around simplicity. It’s quite easy to set up a hosting and configure deployments for your application.
 
-![PWA SW Update procedure](https://cdn-images-1.medium.com/max/1600/0*FHyvYRffIAix_60T.jpg) 
+## Add a project
 
-## Understanding app versions and update checks in Angular
+Once you’ve logged in to [Firebase console](https://console.firebase.google.com/), you can click on `Add Project` button and fill in the form below with your preference.
 
-> In the context of an Angular service worker, a "version" is a collection of resources that represent a specific build of the Angular app. Whenever a new build of the app is deployed, the service worker treats that build as a new version of the app. This is true even if only a single file is updated. At any given time, the service worker may have multiple versions of the app in its cache and it may be serving them simultaneously.
-> 
-> Every time the user opens or refreshes the application, the Angular service worker checks for updates to the app by looking for updates to the ngsw.json manifest. This manifest file represents the "version" of an Angular build, along with all the files associated with ngsw-config file. If an update is found, it is downloaded and cached automatically, and will be served the next time the application is loaded.
+![Add project](https://cdn-images-1.medium.com/max/1600/1*Qh-SDA2No4fQl--m31zQTg.png)
+
+## Set up hosting
+
+After creating your project, navigate to Hosting tab under develop category. 
+
+![Set up hosting](https://cdn-images-1.medium.com/max/2400/1*ncc-9H9yvbsiuwUab45vTQ.png)
+
+You have firebase cli already installed as a project dependency. 
+
+Click `Finish` in order to make your project available on CLI, do not run the commands yet.
+
+## Initialize firebase config
+
+You can deploy your PWA to Firebase for the first time by simply executing 3 commands via Firebase CLI; `login`, `init` and `deploy`. 
+
+We'll only make use of hosting service of Firebase for now. In order to do that, follow the instructions below;
+
+* Run `npx firebase init` on your project root 
+* Check `Hosting` with `Space`
+* Press `Enter`
+
+![Init Firebase](https://cdn-images-1.medium.com/max/2400/1*WpxdhNU_HQ2y9yp6RoRNig.png)
+
+* On the next step, it will show your existing projects to you to set up a hosting on. Select the project that you've created on the step above.
+* What do you want to use as your public directory? Enter `www`
+* Configure as a single-page app (rewrite all urls to /index.html)? Press `y`
+* File `www/index.html` already exists. Overwrite? Press `n`
+
+As an output of this setup, Firebase CLI creates 2 files in your project root: `firebase.json` and `.firebaserc`
+
+## Configure your hosting
+
+It’s possible to configure your hosting on Firebase via firebase.json file in your project. You can see the default configuration of which Firebase CLI created for your project below;
+
+```json
+{
+  "hosting": {
+    "public": "www",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+```
+
+It’s important to be aware of a couple of points on this configuration.
+
+* Since Angular is a SPA (Single Page Application), you must configure rewrite as above to point all sources to your index.html file.
+* Do not deploy any file that keeps your credentials under no circumstances. Keys, secrets, and such confidential information on your configuration files that relies on the public folder you pointed out, might be exposed to the world immediately. Make sure to ignore any configuration file you have in your public folder.
+
+### Add custom HTTP headers for caching
+
+Firebase hosting configuration allows you to add [custom HTTP headers](https://firebase.google.com/docs/hosting/full-config#headers) for your project.
+
+This configuration is especially important for your PWA where you might want to cache your static assets and gzip them to improve your app’s loading performance. A long cache lifetime can speed up repeat visits to your page.
+
+> When a browser requests a resource, the server providing the resource can tell the browser how long it should temporarily store or cache the resource. For any subsequent request for that resource, the browser uses its local copy, rather than going to the network to get it.
 >
-> — [Angular docs](https://angular.io/guide/service-worker-devops)
+> — [Cache policy on Google Developers portal](https://developers.google.com/web/tools/lighthouse/audits/cache-policy)
 
-Inspect the NGSW manifest file located at `www/ngsw.json`. If www folder is not there, generate it by building it for production: `npm run build -- --prod`.
+![Verifying cached responses in Chrome DevTools](https://cdn-images-1.medium.com/max/1600/0*ejKN_MNjBX8L7TUH.png)
 
-## Add app data to NGSW config
+> Since Angular creates your static resources with a hash postfix in the filename, you can take advantage of introducing a long cache lifetime for those resources by adding Cache-Control HTTP header. When you do that, you should also consider invalidating your caches. However, invalidating caches of static resources is not required for your Angular app as Angular’s build system automatically changes the postfix hash in your resources’ file names when they’re updated.
 
-`appData` field in ngsw-config.json file enables you to pass any data you want that describes this particular version of the app. The [SwUpdate](https://angular.io/api/service-worker/SwUpdate) service includes that data in the update notifications. Many apps make use of this field to provide some additional info for the display of any popups, notifying users of the available update.
-
-Add the following object to your `ngsw-config.json` file;
+Add the following configuration to your `firebase.json` file;
 
 ```json
 {
-  "appData": {
-    "version": "1.0.0",
-    "changelog": "Initial release"
-  }
+  "headers": [
+    {
+      "source": "**/*.@(js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=31536000"
+        }
+      ]
+    }
+  ]
 }
 ```
 
-## Add update notification handler
+### Keep your service worker files fresh
 
-Angular handles its service worker updates via its own service called [SwUpdate](https://angular.io/api/service-worker/SwUpdate) from @angular/service-worker module. You can subscribe to `UpdateAvailableEvent` and `UpdateActivatedEvent` events on this service to be notified on service worker updates.
+When you make use of such cache configuration above for all your js and css files, you must create an exception rule for your additional service worker files. 
 
-* Open `/src/app/app.component.ts` file
-* Import `SwUpdate` from `@angular/service-worker` and inject it to the constructor
-* Inject AlertController from Ionic to display an alert box
-* Subscribe to swUpdate available stream and create a callback fn that receives UpdateAvailableEvent
-* Display appData.version and appData.changelog information in the alert message
-* Provide an option to users to immediately update the app by calling `window.location.reload()` 
-* Example;
-
-```typescript
-constructor(
-  private swUpdate: SwUpdate,
-  private alertController: AlertController,
-) {}
-
-ngOnInit() {
-  this.handleAppUpdate();
-}
-
-handleAppUpdate() {
-  if (this.swUpdate.isEnabled) {
-    this.swUpdate.available.subscribe(async (event: UpdateAvailableEvent) => {
-      const alert = await this.alertController.create({
-        header: `App update!`,
-        message: `Newer version - v${((event.available.appData) as any).version} is available.
-                  Change log: ${((event.available.appData) as any).changelog}`,
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            cssClass: 'secondary',
-          }, {
-            text: 'Refresh',
-            handler: () => {
-              window.location.reload();
-            },
-          },
-        ],
-      });
-
-      await alert.present();
-    });
-  }
-}
-``` 
-
-> Please note that you don’t have to provide this manual update functionality. Service workers are automatically updated by the browser on the time of disconnection of all clients or pages attached to it. However, it's recommended providing this immediate update option for the convenience of your users.
-
-## Test the results
-
-In order to simulate an app update, follow the instructions below;
-
-* Make sure that `Update on reload` option at Application -> Service Worker panel in Chrome's Web Inspector, is not selected.
-* Simulate an app update by modifying `ngsw-config.json` file. Increase the version in app data and add a change log message.
+Add the following no-cache exception to your `firebase.json` file;
 
 ```json
 {
-  appData": {
-    "version": "1.0.1",
-    "changelog": "Added foo:bar feature"
-  }
+  "headers": [
+    {
+      "source": "**/*-sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
 }
 ```
-* Serve the app with running `npm run server`.
-* Rebuild your app with running `npm run build:prod` while you have the app open on Chrome, and while serving the app already with `npm run server`.
-* Refresh you tab and you need to see a new service worker waiting for an update in web inspector and also an alert popup in your app. 
 
-## Good to go 🎯
+## Deploy your app
 
-Now you can continue to Step 9 -> [Host on Firebase](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-10/README.md).
+Run `npm run build:prod` and `npx firebase deploy` in project root.
+ 
+
+## Congratulations! 🎉
+
+Thanks for completing the workshop! You're amazing!!!
+
+Please continue to `final` branch to see the complete solution and final message -> [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md).
