@@ -45,3 +45,5 @@ Every next step/branch includes the solution of the previous step.
 10. [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md)
 
 Once you're ready with your local environment, you can start the workshop by navigation to the first step -> [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md).
+
+For questions, remarks and feedback; please contact me on [Twitter -> @onderceylan](https://twitter.com/onderceylan).
