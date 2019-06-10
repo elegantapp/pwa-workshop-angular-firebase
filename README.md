@@ -8,7 +8,9 @@ The workshop is consist of 10 steps of producing a PWA by transforming a regular
 
 ## Ionic Conference App
 
-The end application is purely a kitchen-sink demo of a PWA based on the Ionic Framework and Angular.
+The end application is purely a kitchen-sink demo of a PWA based on Ionic Framework and Angular. We will be using some of Ionic's UI components and services with Angular for creating a uniform and native-like user experince in multiple platforms.
+
+**We will not use Ionic for building a hybrid mobile app, but instead we will use it for building a PWA!**
 
 ![Ionic Conf App](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/SchedulePage.png)
 
