@@ -5,10 +5,10 @@ const rootDir = path.join(appDir, '..');
 
 const iconSizes = [72,96,128,144,152,192,384,512];
 
-// Suppress MaxListenersExceededWarning
+// Suppressing MaxListenersExceededWarning
 try {
   process.setMaxListeners(0);
-} catch {}
+} catch(e) {}
 
 const images = [
   { name: 'apple-icon', size: { width: 512, height: 512 } },
@@ -26,19 +26,24 @@ const images = [
 ];
 
 images.forEach(async ({ name, size: { width, height } }) => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: {
-      width,
-      height,
-    },
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-    ]});
-  const page = await browser.newPage();
-  await page.goto(`file://${rootDir}/resources/logo.html`);
-  await page.screenshot({path: `${rootDir}/src/assets/icons/${name}.png`});
+  try {
+    const browser = await puppeteer.launch({
+      headless: true,
+      defaultViewport: {
+        width,
+        height,
+      },
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ]});
+    const page = await browser.newPage();
+    await page.goto(`file://${rootDir}/resources/logo.html`);
+    await page.screenshot({path: `${rootDir}/src/assets/icons/${name}.png`});
 
-  await browser.close();
+    await browser.close();
+  } catch (e) {
+    console.error('Generating resources with Puppeteer has failed!');
+    throw e;
+  }
 });
