@@ -1,49 +1,39 @@
-# Build a production ready PWA with Angular and Firebase
+# Step 1
 
-![PWA LOGO](https://user-images.githubusercontent.com/3104648/28351989-7f68389e-6c4b-11e7-9bf2-e9fcd4977e7a.png)
+## Add @angular/pwa schematic
 
-Welcome to the workshop of building a production ready Progressive Web App based on Angular, Ionic and Firebase.
+The first thing you need to do on your existing Angular app to transform it into a Progressive Web App is, adding @angular/pwa schematic to your app.
 
-This workshop consists of 10 steps for producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/) into a PWA, finally deploying it to Firebase.
+Simply run **add** command on your Angular CLI.
 
-## Ionic Conference App
+```bash
+npm run ng add @angular/pwa
+```
 
-The end application is purely a kitchen-sink demo of a PWA based on Ionic Framework and Angular. We will be using some of Ionic's UI components and services with Angular for creating a uniform and native-like user experince in multiple platforms.
+## Acknowledge local changes
 
-**We will not use Ionic for building a hybrid mobile app, but instead we will use it for building a PWA!**
+Running `ng add @angular/pwa` creates the following files for your application;
 
-![Ionic Conf App](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/SchedulePage.png)
+```
+ngsw-config.json
+src/assets/icons/icon-128x128.png
+src/assets/icons/icon-144x144.png
+src/assets/icons/icon-152x152.png
+src/assets/icons/icon-192x192.png
+src/assets/icons/icon-384x384.png
+src/assets/icons/icon-512x512.png
+src/assets/icons/icon-72x72.png
+src/assets/icons/icon-96x96.png
+src/manifest.json
+``` 
 
-## How this workshop works?
+It will also tweak your `angular.json`, `index.html` and `app.module.ts` files accordingly. 
+Please take a look at your local diff by running `git status` and `git diff`.
 
-Since we depend on Angular CLI and some other tools which are not available for online code editor environments, we're going to develop and build the app on our local computers.
+## Update angular.json
 
-Every next step/branch includes the solution of the previous step.
+Change the path in the `ngswConfigPath` config in `angular.json` file from `/ngsw-config.json` to `ngsw-config.json`.
+Test the production build by running `npm run build:prod`. If no error shows up, continue.
 
-> If you're stuck at any of the steps, you can switch to the next step/branch and continue from there. Note that you need to discard your local changes on git when you checkout a solution.
-
-## Requirements for local development environment
-
-- Google Chrome - [Download](https://www.google.com/chrome/)
-- node.js > 8.0.0 & npm > 5.2.0 - [Download](https://nodejs.org/en/)
-- Open a Firebase Account (FREE) - [Link](https://firebase.google.com/)
-- GIT - [Download](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- Clone this repo - Run `git clone https://github.com/onderceylan/pwa-workshop-angular-firebase`
-- Run `npm i`
-
-## Table of Contents
-
-1. [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md)
-2. [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md)
-3. [Add meta tags for icons and splash screens](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md)
-4. [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md)
-5. [Add asset groups for app shell and icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-5/README.md)
-6. [Add data group for conference data](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-6/README.md)
-7. [Extend NGSW](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-7/README.md)
-8. [Update PWA](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-8/README.md)
-9. [Host on Firebase](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-9/README.md)
-10. [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md)
-
-Once you're ready with your local environment, you can start the workshop by navigation to the first step -> [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md).
-
-For questions, remarks and feedback; please contact me on [Twitter -> @onderceylan](https://twitter.com/onderceylan).
+## Good to go 🎯
+Now you can continue to Step 2 -> [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md). 
