@@ -6,13 +6,19 @@ Welcome to the workshop of building a production ready Progressive Web App based
 
 The workshop is consist of 10 steps of producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/) into a PWA and deploying it to Firebase.
 
+## Ionic Conference App
+
 The end application is purely a kitchen-sink demo of a PWA based on the Ionic Framework and Angular.
+
+![Ionic Conf App](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/SchedulePage.png)
 
 ## How this workshop works?
 
 Since we depend on Angular CLI and some other tools which are not available for online code editor environments, we're going to develop and build the app on our local computers.
 
-Every next step/branch includes the solution of the previous step. If you're stuck at any of the step, you can switch to the next step/branch and continue from there - note that you need to discard your local changes on git staging.
+Every next step/branch includes the solution of the previous step.
+
+If you're stuck at any of the steps, you can switch to the next step/branch and continue from there. Note that you need to discard your local changes on git when you checkout a solution.
 
 ## Requirements for local development environment
 
@@ -36,4 +42,4 @@ Every next step/branch includes the solution of the previous step. If you're stu
 9. [Host on Firebase](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-9/README.md)
 10. [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md)
 
-Once you're ready with your local environment, you can start the workshop by navigation to the first step - [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md).
+Once you're ready with your local environment, you can start the workshop by navigation to the first step -> [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md).
