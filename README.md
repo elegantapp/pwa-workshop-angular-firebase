@@ -16,7 +16,7 @@ As you might remember from Step 7, we had a bonus step to introduce push notific
 
 ## Participate in Web Capabilities codelab
 
-Google leads a project called Fugu in order to close the capability gap of PWAs compared to native mobile applications. [Read more about it here](https://developers.google.com/web/updates/capabilities).
+Google leads a project called Fugu in order to close the capability gap of PWAs compared to native applications. [Read more about it here](https://developers.google.com/web/updates/capabilities).
 
 Participate in the [Web Capabilities codelab](https://codelabs.developers.google.com/codelabs/web-capabilities/) and introduce what you've learned from there to this app.
 
