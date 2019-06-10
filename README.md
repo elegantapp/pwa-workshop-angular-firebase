@@ -55,7 +55,7 @@ In order to add splash screen to your PWA on iOS, we must add a meta tag that po
 
 ![Static launch screen images](https://cdn-images-1.medium.com/max/1600/1*hKRjSlhCNrFMo0ut_O9RBg.png) 
 
-You need to create static images in different sizes for different devices. Here’s a list of devices and their resolutions: https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/launch-screen/#static-launch-screen-images-not-recommended 
+We need to create static images in different sizes for different devices, so we just did it with `npm run resources` command. Here’s a list of devices and their resolutions: https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/launch-screen/#static-launch-screen-images-not-recommended 
 
 Add the following code to the `index.html` file of your PWA. 
 
