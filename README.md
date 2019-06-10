@@ -20,7 +20,7 @@ Since we depend on Angular CLI and some other tools which are not available for 
 
 Every next step/branch includes the solution of the previous step.
 
-If you're stuck at any of the steps, you can switch to the next step/branch and continue from there. Note that you need to discard your local changes on git when you checkout a solution.
+> If you're stuck at any of the steps, you can switch to the next step/branch and continue from there. Note that you need to discard your local changes on git when you checkout a solution.
 
 ## Requirements for local development environment
 
