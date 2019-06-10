@@ -60,7 +60,7 @@ For a typical minimal app shell, devices load `index.html`, layout css files, ve
 
 ### Add app shell asset group to ngsw-config.json
 
-Run `npm run build -- --prod` and observe the output to see which files can be cached for the app shell. In addition, navigate to `www` output folder of the project and observe the static assets that should be part of app shell over there.
+Run `npm run build:prod` and observe the output to see which files can be cached for the app shell. In addition, navigate to `www` output folder of the project and observe the static assets that should be part of app shell over there.
 
 Open `ngsw-config.json` file and extend the following config;
 
