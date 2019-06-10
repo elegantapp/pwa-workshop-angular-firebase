@@ -4,7 +4,7 @@
 
 Welcome to the workshop of building a production ready Progressive Web App based on Angular, Ionic and Firebase.
 
-The workshop is consist of 10 steps of producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/) into a PWA and deploying it to Firebase.
+This workshop consists of 10 steps for producing a PWA by transforming a regular web app - [Ionic Conference App](https://github.com/ionic-team/ionic-conference-app/) into a PWA, finally deploying it to Firebase.
 
 ## Ionic Conference App
 
