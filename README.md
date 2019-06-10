@@ -102,4 +102,4 @@ In order to simulate an app update, follow the instructions below;
 
 ## Good to go 🎯
 
-Now you can continue to Step 9 -> [Host on Firebase](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-10/README.md).
+Now you can continue to Step 9 -> [Host on Firebase](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-9/README.md).
