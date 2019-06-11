@@ -1,6 +1,4 @@
-# Step 4
-
-## Display A2HS on iOS
+# Step 4 - Display A2HS on iOS
 
 Google Chrome automatically detects a PWA on Android systems and if the site meets the [add to home screen criteria](https://developers.google.com/web/fundamentals/app-install-banners/#criteria), it shows an [install banner or mini info bar](https://developers.google.com/web/updates/2018/06/a2hs-updates) to the user to allow them adding it to their home screen.
 
