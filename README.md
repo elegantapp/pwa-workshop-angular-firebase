@@ -1,6 +1,4 @@
-# Step 1
-
-## Add @angular/pwa schematic
+# Step 1 - Add @angular/pwa schematic
 
 The first thing you need to do on your existing Angular app to transform it into a Progressive Web App is, adding @angular/pwa schematic to your app.
 
