@@ -1,4 +1,4 @@
-# Step 9
+# Step 9 - Host on Firebase
 
 Firebase is built around simplicity. It’s quite easy to set up a hosting and configure deployments for your application.
 
