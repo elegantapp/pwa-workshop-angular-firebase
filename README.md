@@ -1,6 +1,4 @@
-# Step 2
-
-## Change web app manifest
+# Step 2 - Change web app manifest
 
 >The [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) is a simple JSON file that tells the browser about your web application and how it should behave when ‘installed’ on the user’s mobile device or desktop. Having a manifest is required by Chrome to show the [Add to Home Screen prompt](https://developers.google.com/web/fundamentals/app-install-banners/).
 >
