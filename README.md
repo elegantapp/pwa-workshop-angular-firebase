@@ -1,4 +1,4 @@
-# Step 7
+# Step 7 - Extend NGSW
 
 As of today, Angular service worker — aka NGSW doesn't support the composition of another service worker. This means that you cannot extend Angular service worker's default behaviour and add your own flavour to it.
 
