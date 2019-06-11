@@ -1,4 +1,4 @@
-# Step 8
+# Step 8 - Update PWA
 
 A service worker is the backbone of a Progressive Web App. And, updating a PWA always starts at its service worker. Browsers regularly check attached service worker of a client app for a byte difference and once service worker file is updated, the browser automatically initializes an update process.
 
