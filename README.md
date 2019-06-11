@@ -1,4 +1,4 @@
-# Step 5
+# Step 5 - Add asset groups for app shell and icons
 
 In this step, we're going to configure `ngsw-config.json` file based on [Angular's NGSW docs](https://angular.io/guide/service-worker-config). We'll define a cache strategy for our application shell and other static assets.
 
