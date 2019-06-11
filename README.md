@@ -1,6 +1,4 @@
-# Step 3
-
-## Add meta tags for icons and splash screens
+# Step 3 - Add meta tags for icons and splash screens
 
 By adding PWA schematic of Angular, we've had automatically generated icon files under `/src/assets/icons` folder. 
 
