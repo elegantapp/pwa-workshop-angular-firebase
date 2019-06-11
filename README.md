@@ -1,4 +1,4 @@
-# Step 6
+# Step 6 - Add data group for conference data
 
 In this step, we're going to configure `ngsw-config.json` file based on [Angular's NGSW docs](https://angular.io/guide/service-worker-config). We'll define a cache strategy for our application's data resources.
 
