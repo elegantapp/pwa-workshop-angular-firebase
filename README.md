@@ -35,7 +35,7 @@ Every next step/branch includes the solution of the previous step.
 
 1. [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md)
 2. [Change web app manifest](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-2/README.md)
-3. [Add meta tags for icons and splash screens](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md)
+3. [Customize app icons and splash screens](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-3/README.md)
 4. [Display A2HS on iOS](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-4/README.md)
 5. [Add asset groups for app shell and icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-5/README.md)
 6. [Add data group for conference data](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-6/README.md)
