@@ -20,6 +20,7 @@
     {
       "name": "modules",
       "installMode": "lazy",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/*.js",
