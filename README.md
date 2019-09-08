@@ -118,7 +118,7 @@ By doing this, we exclude the JS files that we've declared as part of our `appsh
 
 ## Add asset group for icons
 
-We also need to introduce an additional asset group for caching image assets. Open `ngsw-config.json` file and add the following asset group;
+We also need to introduce an additional asset group for caching image assets. Open `ngsw-config.json` file and change the group with the name of `assets` into following;
 
 ```json
 {
