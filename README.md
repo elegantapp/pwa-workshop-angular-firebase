@@ -116,7 +116,7 @@ Please verify all the changes before proceeding.
 
 > Keep an eye on WebKit Feature Status for tracking the progress of the implementation of web standards. For instance; once Web App Manifest specs is implemented on WebKit, you won’t need to use the custom meta tags above anymore. Track the progress here: https://webkit.org/status/#?search=manifest
 
-If you like the library, you can star it on GitHub and follow the developments on it: https://github.com/onderceylan/pwa-asset-generator
+If you like the library, please star it on GitHub and follow the developments on it: https://github.com/onderceylan/pwa-asset-generator
 
 ## Add meta tags for the status bar on iOS
 
