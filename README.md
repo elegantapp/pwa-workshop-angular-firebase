@@ -93,12 +93,12 @@ In order to simulate an app update, follow the instructions below;
 {
   "appData": {
     "version": "1.0.1",
-    "changelog": "Added foo:bar feature"
+    "changelog": "Fixed foo:bar bug"
   }
 }
 ```
 * Rebuild your app with running `npm run build:prod` while you have the app open on Chrome, and while serving the app already with `npm run server`.
-* Refresh you tab and you need to see a new service worker waiting for an update in web inspector and also an alert popup in your app. 
+* Refresh your tab and you need to see a new service worker waiting for an update in web inspector and also an alert popup in your app. 
 
 ## Good to go 🎯
 
