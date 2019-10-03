@@ -4,7 +4,7 @@ Google Chrome automatically detects a PWA on Android systems and if the site mee
 
 ![A2HS Popup on Android](https://cdn-images-1.medium.com/max/1600/0*i0LfXaT1VuddsPB8.png) 
 
-Such functionality does not exist on iOS. But, luckily we can build our own UX to guide users towards the required taps to help them add your app to their home screens.
+Such functionality does not exist on iOS. But, luckily we can build our own UX to guide users towards the required taps to help them add your app to their home screens. We're going to implement the below logic on `app.component.ts` file.
 
 ## Display a banner with A2HS message to the users 
 
