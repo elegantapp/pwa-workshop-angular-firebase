@@ -22,15 +22,14 @@ src/assets/icons/icon-384x384.png
 src/assets/icons/icon-512x512.png
 src/assets/icons/icon-72x72.png
 src/assets/icons/icon-96x96.png
-src/manifest.json
+src/manifest.webmanifest
 ``` 
 
 It will also tweak your `angular.json`, `index.html` and `app.module.ts` files accordingly. 
 Please take a look at your local diff by running `git status` and `git diff`.
 
-## Update angular.json
+## Test the build
 
-Change the path in the `ngswConfigPath` config in `angular.json` file from `/ngsw-config.json` to `ngsw-config.json`.
 Test the production build by running `npm run build:prod`. If no error shows up, continue.
 
 ## Good to go 🎯
