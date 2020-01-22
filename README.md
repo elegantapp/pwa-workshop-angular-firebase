@@ -74,6 +74,7 @@ Open `ngsw-config.json` file and extend the following config;
         "files": [
           "/favicon.ico",
           "/index.html",
+          "/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]
