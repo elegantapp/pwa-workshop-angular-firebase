@@ -247,8 +247,10 @@
   "speakers": [
     {
       "name": "Burt Bear",
-      "profilePic": "/assets/img/speakers/bear.jpg",
+      "profilePic": "assets/img/speakers/bear.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Burt is a Bear.",
       "location": "Everywhere",
       "email": "burt@example.com",
@@ -257,8 +259,10 @@
     },
     {
       "name": "Charlie Cheetah",
-      "profilePic": "/assets/img/speakers/cheetah.jpg",
+      "profilePic": "assets/img/speakers/cheetah.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Charlie is a Cheetah.",
       "location": "Everywhere",
       "email": "charlie@example.com",
@@ -267,8 +271,10 @@
     },
     {
       "name": "Donald Duck",
-      "profilePic": "/assets/img/speakers/duck.jpg",
+      "profilePic": "assets/img/speakers/duck.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Donald is a Duck.",
       "location": "Everywhere",
       "email": "donald@example.com",
@@ -277,8 +283,10 @@
     },
     {
       "name": "Eva Eagle",
-      "profilePic": "/assets/img/speakers/eagle.jpg",
+      "profilePic": "assets/img/speakers/eagle.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Eva is an Eagle.",
       "location": "Everywhere",
       "email": "eva@example.com",
@@ -287,8 +295,10 @@
     },
     {
       "name": "Ellie Elephant",
-      "profilePic": "/assets/img/speakers/elephant.jpg",
+      "profilePic": "assets/img/speakers/elephant.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Ellie is an Elephant.",
       "location": "Everywhere",
       "email": "ellie@example.com",
@@ -297,8 +307,10 @@
     },
     {
       "name": "Gino Giraffe",
-      "profilePic": "/assets/img/speakers/giraffe.jpg",
+      "profilePic": "assets/img/speakers/giraffe.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Gino is a Giraffe.",
       "location": "Everywhere",
       "email": "gino@example.com",
@@ -307,8 +319,10 @@
     },
     {
       "name": "Isabella Iguana",
-      "profilePic": "/assets/img/speakers/iguana.jpg",
+      "profilePic": "assets/img/speakers/iguana.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Isabella is an Iguana.",
       "location": "Everywhere",
       "email": "isabella@example.com",
@@ -317,8 +331,10 @@
     },
     {
       "name": "Karl Kitten",
-      "profilePic": "/assets/img/speakers/kitten.jpg",
+      "profilePic": "assets/img/speakers/kitten.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Karl is a Kitten.",
       "location": "Everywhere",
       "email": "karl@example.com",
@@ -327,8 +343,10 @@
     },
     {
       "name": "Lionel Lion",
-      "profilePic": "/assets/img/speakers/lion.jpg",
+      "profilePic": "assets/img/speakers/lion.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Lionel is a Lion.",
       "location": "Everywhere",
       "email": "lionel@example.com",
@@ -337,8 +355,10 @@
     },
     {
       "name": "Molly Mouse",
-      "profilePic": "/assets/img/speakers/mouse.jpg",
+      "profilePic": "assets/img/speakers/mouse.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Molly is a Mouse.",
       "location": "Everywhere",
       "email": "molly@example.com",
@@ -347,8 +367,10 @@
     },
     {
       "name": "Paul Puppy",
-      "profilePic": "/assets/img/speakers/puppy.jpg",
+      "profilePic": "assets/img/speakers/puppy.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Paul is a Puppy.",
       "location": "Everywhere",
       "email": "paul@example.com",
@@ -357,8 +379,10 @@
     },
     {
       "name": "Rachel Rabbit",
-      "profilePic": "/assets/img/speakers/rabbit.jpg",
+      "profilePic": "assets/img/speakers/rabbit.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Rachel is a Rabbit.",
       "location": "Everywhere",
       "email": "rachel@example.com",
@@ -367,8 +391,10 @@
     },
     {
       "name": "Ted Turtle",
-      "profilePic": "/assets/img/speakers/turtle.jpg",
+      "profilePic": "assets/img/speakers/turtle.jpg",
+      "instagram": "ionicframework",
       "twitter": "ionicframework",
+      "github": "ionic-team/ionic",
       "about": "Ted is a Turtle.",
       "location": "Everywhere",
       "email": "ted@example.com",
@@ -393,6 +419,49 @@
       "name": "Afterparty - Brocach Irish Pub",
       "lat": 43.07336,
       "lng": -89.38335
+    }
+  ],
+
+  "tracks": [
+    {
+      "name": "Angular",
+      "icon": "logo-angular"
+    },
+    {
+      "name": "Documentation",
+      "icon": "document"
+    },
+    {
+      "name": "Food",
+      "icon": "restaurant"
+    },
+    {
+      "name": "Ionic",
+      "icon": "logo-ionic"
+    },
+    {
+      "name": "Tooling",
+      "icon": "hammer"
+    },
+    {
+      "name": "Design",
+      "icon": "color-palette"
+    },
+    {
+      "name": "Services",
+      "icon": "cog"
+    },
+    {
+      "name": "Workshop",
+      "icon": "construct"
+    },
+    {
+      "name": "Communication",
+      "icon": "call"
+    },
+    {
+      "name": "Navigation",
+      "icon": "compass"
     }
   ]
 }
