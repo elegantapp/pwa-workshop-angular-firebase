@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, MenuController, ToastController } from '@ionic/angular';
+import { MenuController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { UserData } from './providers/user-data';
 
@@ -34,9 +34,9 @@ export class AppComponent implements OnInit {
     }
   ];
   loggedIn = false;
+  dark = false;
 
   constructor(
-    private events: Events,
     private menu: MenuController,
     private router: Router,
     private storage: Storage,
@@ -89,15 +89,15 @@ export class AppComponent implements OnInit {
   }
 
   listenForLoginEvents() {
-    this.events.subscribe('user:login', () => {
+    window.addEventListener('user:login', () => {
       this.updateLoggedInStatus(true);
     });
 
-    this.events.subscribe('user:signup', () => {
+    window.addEventListener('user:signup', () => {
       this.updateLoggedInStatus(true);
     });
 
-    this.events.subscribe('user:logout', () => {
+    window.addEventListener('user:logout', () => {
       this.updateLoggedInStatus(false);
     });
   }

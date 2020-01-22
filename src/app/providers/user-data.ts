@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 @Injectable({
@@ -11,7 +10,6 @@ export class UserData {
   HAS_SEEN_TUTORIAL = 'hasSeenTutorial';
 
   constructor(
-    public events: Events,
     public storage: Storage
   ) { }
 
@@ -33,14 +31,14 @@ export class UserData {
   login(username: string): Promise<any> {
     return this.storage.set(this.HAS_LOGGED_IN, true).then(() => {
       this.setUsername(username);
-      return this.events.publish('user:login');
+      return window.dispatchEvent(new CustomEvent('user:login'));
     });
   }
 
   signup(username: string): Promise<any> {
     return this.storage.set(this.HAS_LOGGED_IN, true).then(() => {
       this.setUsername(username);
-      return this.events.publish('user:signup');
+      return window.dispatchEvent(new CustomEvent('user:signup'));
     });
   }
 
@@ -48,7 +46,7 @@ export class UserData {
     return this.storage.remove(this.HAS_LOGGED_IN).then(() => {
       return this.storage.remove('username');
     }).then(() => {
-      this.events.publish('user:logout');
+      window.dispatchEvent(new CustomEvent('user:logout'));
     });
   }
 
