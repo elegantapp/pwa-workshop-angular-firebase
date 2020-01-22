@@ -11,7 +11,7 @@ import { Storage } from '@ionic/storage';
 export class TutorialPage {
   showSkip = true;
 
-  @ViewChild('slides') slides: IonSlides;
+  @ViewChild('slides', { static: true }) slides: IonSlides;
 
   constructor(
     public menu: MenuController,
@@ -21,7 +21,7 @@ export class TutorialPage {
 
   startApp() {
     this.router
-      .navigateByUrl('/app/tabs/schedule')
+      .navigateByUrl('/app/tabs/schedule', { replaceUrl: true })
       .then(() => this.storage.set('ion_did_tutorial', true));
   }
 
@@ -34,7 +34,7 @@ export class TutorialPage {
   ionViewWillEnter() {
     this.storage.get('ion_did_tutorial').then(res => {
       if (res === true) {
-        this.router.navigateByUrl('/app/tabs/schedule');
+        this.router.navigateByUrl('/app/tabs/schedule', { replaceUrl: true });
       }
     });
 

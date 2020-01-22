@@ -26,7 +26,7 @@
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
               },
-              "src/manifest.json",
+              "src/manifest.webmanifest",
               {
                 "glob": "**/*-sw.js",
                 "input": "src/sw",
