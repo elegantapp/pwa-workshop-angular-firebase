@@ -38,7 +38,7 @@ Angular handles its service worker updates via its own service called [SwUpdate]
 * Inject AlertController from Ionic to display an alert box
 * Subscribe to swUpdate available stream and create a callback fn that receives UpdateAvailableEvent
 * Display appData.version and appData.changelog information in the alert message
-* Provide an option to users to immediately update the app by calling `window.location.reload()` 
+* Provide an option to users to immediately update the app by calling `swUpdate.activateUpdate().then(() => window.location.reload());` 
 * Example;
 
 ```typescript
@@ -66,7 +66,7 @@ handleAppUpdate() {
           }, {
             text: 'Refresh',
             handler: () => {
-              window.location.reload();
+              this.swUpdate.activateUpdate().then(() => window.location.reload());
             },
           },
         ],
