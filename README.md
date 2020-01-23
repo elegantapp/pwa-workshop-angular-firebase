@@ -47,7 +47,7 @@ Depending on the policy by which they are cached, you can introduce either `lazy
 
 Starting with v8, Angular introduced [differential loading](https://web.dev/codelab-serve-modern-code/) process by default for the build step. We now take advantage of this by default by performing a modern build (es2015) and a legacy build (es5) of our application. When users load our app, they’ll automatically get the bundle they need depending their browser's capabilities.
 
-Here's an example production build output on an Angular 8 project;
+Here's an example production build output on an Angular 8 project, in `index.html` file;
 
 ```html
 <script src="runtime-es2015.f745434ce2670ac24101.js" type="module"></script>
@@ -108,7 +108,7 @@ Open `ngsw-config.json` file and extend the following config;
 ```
 
 * Rename the cache name `app` to `appshell`.
-* Add `/vendor-es2015.*.js`, `/common-es2015.*.js`, `/main-es2015.*.js`, `/runtime-es2015.*.js`, `/*polyfills-es2015.*.js` globs to files array.
+* Add `/vendor-es2015.*.js`, `/common-es2015.*.js`, `/main-es2015.*.js`, `/runtime-es2015.*.js`, `/polyfills-es2015.*.js` globs to files array.
 * Rename `/*.css` glob to `/styles.*.css` in files array.
 * Remove `/*.js` from files array.
 
