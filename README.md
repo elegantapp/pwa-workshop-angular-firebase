@@ -34,8 +34,7 @@ Depending on the policy by which they are cached, you can introduce either `lazy
       "resources": {
         "files": [
           "/*.css",
-          "/vendor.*.js",
-          "/runtime.*.js",
+          "/*.js",
           "!/*-sw.js"
         ]
       }
@@ -43,6 +42,30 @@ Depending on the policy by which they are cached, you can introduce either `lazy
   ]
 }
 ```
+
+### Differential Loading
+
+Starting with v8, Angular introduced [differential loading](https://web.dev/codelab-serve-modern-code/) process by default for the build step. We now take advantage of this by default by performing a modern build (es2015) and a legacy build (es5) of our application. When users load our app, they’ll automatically get the bundle they need depending their browser's capabilities.
+
+Here's an example production build output on an Angular 8 project;
+
+```html
+<script src="runtime-es2015.f745434ce2670ac24101.js" type="module"></script>
+<script src="runtime-es5.f745434ce2670ac24101.js" nomodule defer></script>
+
+<script src="polyfills-es2015.e257699955aee54b6150.js" type="module"></script>
+<script src="polyfills-es5.8f5047ece2a6f037ae9a.js" nomodule defer></script>
+
+<script src="vendor-es2015.c51354aa82ec5e68cd22.js" type="module"></script>
+<script src="vendor-es5.c51354aa82ec5e68cd22.js" nomodule defer></script>
+
+<script src="main-es2015.df8e23b68223647b15a1.js" type="module"></script>
+<script src="main-es5.df8e23b68223647b15a1.js" nomodule defer></script>
+```
+
+In our PWA and Service Worker API context, preloading and caching legacy builds (es5) do not make any sense as legacy browsers do not support [Service Worker API](https://caniuse.com/#search=Service%20Worker). 
+
+So, we will only aim to cache the JavaScript module resources with `-es2015` postfix.
 
 ## Add asset group for app shell
 
@@ -85,13 +108,13 @@ Open `ngsw-config.json` file and extend the following config;
 ```
 
 * Rename the cache name `app` to `appshell`.
-* Add `/vendor.*.js`, `/common.*.js`, `/main.*.js`, `/runtime.*.js`, `/*polyfills.*.js` globs to files array.
+* Add `/vendor-es2015.*.js`, `/common-es2015.*.js`, `/main-es2015.*.js`, `/runtime-es2015.*.js`, `/*polyfills-es2015.*.js` globs to files array.
 * Rename `/*.css` glob to `/styles.*.css` in files array.
 * Remove `/*.js` from files array.
 
 ## Add asset group for lazy loaded Angular modules
 
-After observing the output in `www` folder, you might have noticed that there are many JS files like `1.ab41d3de4a68c5501412.js`. These files are lazy loaded modules of the app.
+After observing the output in `www` folder, you might have noticed that there are many JS files like `3-es2015.ab41d3de4a68c5501412.js`. These files are lazy loaded modules of the app.
 
 We're going to introduce another asset group with a different cache strategy - `lazy` to handle lazy loaded modules.
 
@@ -104,12 +127,12 @@ Add the following asset group to `assetGroups` array of `ngsw-config.json` file;
   "updateMode": "prefetch",
   "resources": {
     "files": [
-      "/*.js",
-      "!/vendor.*.js",
-      "!/common.*.js",
-      "!/main.*.js",
-      "!/runtime.*.js",
-      "!/*polyfills.*.js"
+      "/*-es2015.*.js",
+      "!/vendor-es2015.*.js",
+      "!/common-es2015.*.js",
+      "!/main-es2015.*.js",
+      "!/runtime-es2015.*.js",
+      "!/polyfills-es2015.*.js"
     ]
   }
 }
