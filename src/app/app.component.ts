@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
     };
 
     // Detects if device is in standalone mode
-    const isInStandaloneMode = () => ('standalone' in (window as any).navigator) && ((window as any).navigator.standalone);
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && ((window as any).navigator.standalone);
 
     // Show the banner once
     const isBannerShown = await this.storage.get('isBannerShown');
