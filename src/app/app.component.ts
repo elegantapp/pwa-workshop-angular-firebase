@@ -36,6 +36,8 @@ export class AppComponent implements OnInit {
   ];
   loggedIn = false;
   dark = false;
+  deferredPrompt;
+  isInstallPromotionDisplayed = false;
 
   constructor(
     private menu: MenuController,
@@ -52,6 +54,7 @@ export class AppComponent implements OnInit {
     this.listenForLoginEvents();
     await this.showIosInstallBanner();
     this.handleAppUpdate();
+    this.hijackInstallPrompt();
   }
 
   handleAppUpdate() {
@@ -142,5 +145,40 @@ export class AppComponent implements OnInit {
     this.menu.enable(false);
     this.storage.set('ion_did_tutorial', false);
     this.router.navigateByUrl('/tutorial');
+  }
+
+  hijackInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent Chrome 76 and later from showing the mini-infobar
+      e.preventDefault();
+
+      // Stash the event so it can be triggered later.
+      this.deferredPrompt = e;
+
+      // Toggle the install promotion display
+      this.showInstallPromotion();
+    });
+  }
+
+  showInstallPromotion() {
+    this.isInstallPromotionDisplayed = true;
+  }
+
+  showInstallPrompt() {
+    // Show the prompt
+    this.deferredPrompt.prompt();
+
+    // Wait for the user to respond to the prompt
+    this.deferredPrompt.userChoice
+      .then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          // Hide the install promotion UI as user just installed it
+          this.isInstallPromotionDisplayed = false;
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        this.deferredPrompt = null;
+      });
   }
 }

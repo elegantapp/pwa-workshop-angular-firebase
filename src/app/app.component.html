@@ -8,6 +8,24 @@
         </ion-toolbar>
       </ion-header>
 
+      <ion-card button color="tertiary"
+                *ngIf="isInstallPromotionDisplayed"
+                (click)="showInstallPrompt()">
+        <ion-card-header>
+          <ion-card-title>Add to home screen</ion-card-title>
+        </ion-card-header>
+
+        <ion-item>
+          <ion-icon name="download" slot="start"></ion-icon>
+          <ion-label>1 click away</ion-label>
+          <ion-button color="tertiary" slot="end">INSTALL</ion-button>
+        </ion-item>
+
+        <ion-card-content>
+          By adding our app to your home screen you can enjoy browsing the app offline.
+        </ion-card-content>
+      </ion-card>
+
       <ion-content>
         <ion-list lines="none">
           <ion-list-header>
