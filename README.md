@@ -14,13 +14,13 @@ Execute `npm run server` command to run a local http server. The server should b
 
 Launch an emulated device on Android Studio AVD. Open Chrome on emulated mobile device and navigate to http://10.0.2.2:8080.
 
-![Non secure](https://user-images.githubusercontent.com/2641384/73658220-467e2e00-4694-11ea-9c1f-65637e106ec0.png)
+<img width="508" alt="11-1-non-secure" src="https://user-images.githubusercontent.com/2641384/73658220-467e2e00-4694-11ea-9c1f-65637e106ec0.png">
 
 Open Chrome DevTools Remote Devices to inspect the remote mobile device. You should see the following error on your console.
 
 `Error: Service workers are disabled or not supported by this browser`
 
-![ Non secure SW](https://user-images.githubusercontent.com/2641384/73658221-467e2e00-4694-11ea-8303-3f7ef06fbe6a.png)
+<img width="869" alt="11-2-non-secure-sw" src="https://user-images.githubusercontent.com/2641384/73658221-467e2e00-4694-11ea-8303-3f7ef06fbe6a.png">
 
 ## Generate a local certificate
 
@@ -165,13 +165,13 @@ Launch your emulated mobile device using Android Studio AVD. Over the Chrome app
 
 You should be getting `Your connection is not private` error on Chrome.
 
-![SSL Error](https://user-images.githubusercontent.com/2641384/73658222-4716c480-4694-11ea-8d39-694239f06a3c.png)
+<img width="502" alt="11-3-ssl-error" src="https://user-images.githubusercontent.com/2641384/73658222-4716c480-4694-11ea-8d39-694239f06a3c.png">
 
 This is the expected behaviour because `mkcert` root certificate is not installed on the device yet.
 
 Tap on `Advanced` and then tap again on `Proceed to 10.0.2.2 (unsafe)`.
 
-![Unsafe](https://user-images.githubusercontent.com/2641384/73658223-4716c480-4694-11ea-8cbb-f265db706f52.png)
+<img width="504" alt="11-4-unsafe" src="https://user-images.githubusercontent.com/2641384/73658223-4716c480-4694-11ea-8cbb-f265db706f52.png">
 
 Now you can access to the app but since the connection is not safe, your service worker is not registered, and Chrome does not display `Add to home screen` bar. 
 
@@ -195,21 +195,21 @@ Within the mobile device, navigate to:
 
 `Settings` > `Security & Location` > `Encryption & Credentials` > `Install from SD Card` > `Downloads` screen. 
 
-![Uploaded files](https://user-images.githubusercontent.com/2641384/73658225-4716c480-4694-11ea-951e-96393dd718a5.png)
+<img width="509" alt="11-5-uploaded-files" src="https://user-images.githubusercontent.com/2641384/73658225-4716c480-4694-11ea-951e-96393dd718a5.png">
 
 Tap on `rootCA.pem` file to install the root certificate. Give any name to the cert and proceed with the installation.
 
-![Install root cert](https://user-images.githubusercontent.com/2641384/73658227-4716c480-4694-11ea-9903-a19fc3d2ce2f.png)
+<img width="511" alt="11-6-install-root-cert" src="https://user-images.githubusercontent.com/2641384/73658227-4716c480-4694-11ea-9903-a19fc3d2ce2f.png">
 
 ### Test the secure protocol on emulated device
 
 On your emulated device, close the Chrome app and relaunch it. Then navigate to https://10.0.2.2 address. 
 
-![Test root cert](https://user-images.githubusercontent.com/2641384/73658232-47af5b00-4694-11ea-83c6-029c07e8c1eb.png)
+<img width="512" alt="11-7-test-root-cert" src="https://user-images.githubusercontent.com/2641384/73658232-47af5b00-4694-11ea-83c6-029c07e8c1eb.png">
 
 Now you can enjoy a secure connection on emulated device environment. You should see the mini A2HS bar showing up at the bottom of the screen.
 
-![Mini info bar](https://user-images.githubusercontent.com/2641384/73658260-5138c300-4694-11ea-935d-b5133022769e.png)
+<img width="522" alt="11-8-mini-info-bar" src="https://user-images.githubusercontent.com/2641384/73658260-5138c300-4694-11ea-935d-b5133022769e.png">
 
 ## Good to go 🎯
 
