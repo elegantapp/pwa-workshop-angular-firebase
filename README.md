@@ -124,8 +124,6 @@ Add the following no-cache exception to your `firebase.json` file;
 Run `npm run build:prod` and `npx firebase deploy` in project root.
  
 
-## Congratulations! 🎉
+## Good to go 🎯
 
-Thanks for completing the workshop! You're amazing!!!
-
-Please continue to `final` branch to see the complete solution and final message -> [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md).
+Now you can continue to Step 10 -> [Use an Android Emulator](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-10/README.md).
