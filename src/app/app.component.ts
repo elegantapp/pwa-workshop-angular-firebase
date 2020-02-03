@@ -252,7 +252,10 @@ export class AppComponent implements OnInit {
       }
 
       this.navigateOnNotificationClick(msg.action);
-      this.notificationToast.dismiss();
+      // Hide the internal message when an action is tapped on system notification
+      if (this.notificationToast) {
+        this.notificationToast.dismiss();
+      }
     });
   }
 
