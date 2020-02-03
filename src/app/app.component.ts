@@ -4,6 +4,18 @@ import { AlertController, MenuController, ToastController } from '@ionic/angular
 import { Storage } from '@ionic/storage';
 import { UserData } from './providers/user-data';
 import { SwPush, SwUpdate, UpdateAvailableEvent } from '@angular/service-worker';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+
+interface PushUser {
+  subscription: {
+    endpoint: string;
+    expirationTime: number | null;
+    keys: {
+      auth: string;
+      p256dh: string;
+    }
+  };
+}
 
 @Component({
   selector: 'app-root',
@@ -41,6 +53,7 @@ export class AppComponent implements OnInit {
   isInstallPromotionDisplayed = false;
   showBackdrop = false;
   Notification = Notification;
+  pushUsersCollection: AngularFirestoreCollection<PushUser>;
 
   constructor(
     private menu: MenuController,
@@ -51,7 +64,10 @@ export class AppComponent implements OnInit {
     private swUpdate: SwUpdate,
     private swPush: SwPush,
     private alertController: AlertController,
-  ) {}
+    private db: AngularFirestore,
+  ) {
+    this.pushUsersCollection = db.collection<PushUser>('pushUsers');
+  }
 
   async ngOnInit() {
     this.checkLoginStatus();
@@ -198,10 +214,12 @@ export class AppComponent implements OnInit {
     if ('Notification' in window && Notification.permission === 'granted') {
 
       this.swPush.requestSubscription({
-        serverPublicKey: 'firebase_web_push_public_vapid_key',
+        serverPublicKey: 'BNkLamK-YMWgX47j3xx9bjhHpPWqtEuR-9rMsXx6L-0-KdYY1RcqydKt7hQEyAiaP8XuJVlX4dqtKP6NNaZSZQM',
       }).then((sub) => {
+        const subscription = JSON.parse(JSON.stringify(sub));
         console.log('subscribeToWebPush successful');
-        console.log(JSON.stringify(sub));
+        console.log(subscription);
+        this.addPushUser({ subscription });
       }).catch((err) => {
         console.log('subscribeToWebPush error', err);
       });
@@ -289,5 +307,9 @@ export class AppComponent implements OnInit {
         });
       }
     });
+  }
+
+  addPushUser(pushUser: PushUser) {
+    return this.pushUsersCollection.doc(pushUser.subscription.keys.auth).set(pushUser, { merge: true });
   }
 }
