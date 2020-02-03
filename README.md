@@ -81,6 +81,14 @@ showInstallPromotion() {
 }
 ```
 
+Also, navigate to `ngOnInit()` method to add `hijackInstallPrompt()` call on component init:
+
+```typescript
+async ngOnInit() {
+  this.hijackInstallPrompt();
+}
+```
+
 ### Add a custom install promotion display
 
 Within the `app.component.ts` file, add the following property and implement the functionality of the `showInstallPromotion()` method.
