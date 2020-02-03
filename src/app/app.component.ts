@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
   loggedIn = false;
   dark = false;
   deferredPrompt;
+  notificationToast: HTMLIonToastElement;
   isInstallPromotionDisplayed = false;
   showBackdrop = false;
   Notification = Notification;
@@ -59,6 +60,8 @@ export class AppComponent implements OnInit {
     this.handleAppUpdate();
     this.hijackInstallPrompt();
     this.subscribeToWebPush();
+    this.subscribeToNotificationClicks();
+    this.subscribeToPushMessages();
   }
 
   handleAppUpdate() {
@@ -227,5 +230,61 @@ export class AppComponent implements OnInit {
         this.showBackdrop = false;
       });
     }
+  }
+
+  navigateOnNotificationClick(notificationAction: string) {
+    const [action, id] = notificationAction.split(':');
+
+    if (action === 'speaker') {
+      this.router.navigateByUrl(`/app/tabs/speakers/speaker-details/${id}`);
+    } else if (action === 'session') {
+      this.router.navigateByUrl(`/app/tabs/schedule/session/${id}`);
+    }
+  }
+
+  subscribeToNotificationClicks() {
+    this.swPush.notificationClicks.subscribe(msg => {
+      console.log('notification click', msg);
+
+      // If there's no action in notification payload, do nothing
+      if (!msg.action) {
+        return;
+      }
+
+      this.navigateOnNotificationClick(msg.action);
+      this.notificationToast.dismiss();
+    });
+  }
+
+  subscribeToPushMessages() {
+    this.swPush.messages.subscribe((msg: {
+      notification: NotificationOptions & {
+        title: string;
+      }
+    }) => {
+      console.log('Received a message in client app', msg);
+      // Only display the toast message if the app is in the foreground
+      if (document.visibilityState === 'visible') {
+        const toast = this.toastController.create({
+          showCloseButton: false,
+          duration: 10000,
+          cssClass: 'custom-toast',
+          position: 'top',
+          message: `${msg.notification.title}
+<strong>${msg.notification.body}</strong>`,
+          buttons: msg.notification.actions.map(actionEl => ({
+            side: 'end',
+            text: actionEl.title,
+            handler: () => {
+              this.navigateOnNotificationClick(actionEl.action);
+            }
+          })),
+        });
+        toast.then(res => {
+          res.present();
+          this.notificationToast = res;
+        });
+      }
+    });
   }
 }
