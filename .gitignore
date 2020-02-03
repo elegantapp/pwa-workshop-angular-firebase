@@ -2,6 +2,7 @@
 # http://git-scm.com/docs/gitignore
 www/
 
+*.pem
 *~
 *.sw[mnpcod]
 *.log
