@@ -315,9 +315,11 @@ We will use [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/A
 
 ### Display the push messages internally
 
-Open `app.component.ts` file and add the following method:
+Open `app.component.ts` file and add the following property and method:
 
 ```typescript
+notificationToast: HTMLIonToastElement;
+
 subscribeToPushMessages() {
   this.swPush.messages.subscribe((msg: {
     notification: NotificationOptions & {
@@ -327,7 +329,6 @@ subscribeToPushMessages() {
     console.log('Received a message in client app', msg);
     // Only display the toast message if the app is in the foreground
     if (document.visibilityState === 'visible') {
-      const classScope = this;
       const toast = this.toastController.create({
         showCloseButton: false,
         duration: 10000,
@@ -338,14 +339,14 @@ subscribeToPushMessages() {
         buttons: msg.notification.actions.map(actionEl => ({
           side: 'end',
           text: actionEl.title,
-          handler: function() {
-              classScope.navigateOnNotificationClick(actionEl.action);
-              this.dismiss();
-            }
+          handler: () => {
+            this.navigateOnNotificationClick(actionEl.action);
+          }
         })),
       });
       toast.then(res => {
         res.present();
+        this.notificationToast = res;
       });
     }
   });
@@ -357,6 +358,32 @@ Also, navigate to `ngOnInit()` method to add `subscribeToPushMessages()` call on
 ```typescript
 async ngOnInit() {
   this.subscribeToPushMessages();
+}
+```
+
+We assigned the toast message to a class property to be able to dismiss it over any other method in our class.
+
+#### Hide the internal message when an action is tapped on system notification
+
+We need to adjust one more thing in this step. When the app is in the foreground, it displays an internal UI. Toast message will be dismissed if user takes an action on it within the internal UI. 
+However, if system notification action is clicked, our internal toast message still stays on the screen. We have to dismiss it on system notification click to provide a uniform experience.
+
+Open `app.component.ts` file and navigate to `subscribeToNotificationClicks()` method. Replace the method with the following:
+
+```typescript
+subscribeToNotificationClicks() {
+  this.swPush.notificationClicks.subscribe(msg => {
+    console.log('notification click', msg);
+
+    // If there's no action in notification payload, do nothing
+    if (!msg.action) {
+      return;
+    }
+
+    this.navigateOnNotificationClick(msg.action);
+    // Hide the internal message when an action is tapped on system notification
+    this.notificationToast.dismiss();
+  });
 }
 ```
 
