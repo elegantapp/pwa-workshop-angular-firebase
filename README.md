@@ -1,88 +1,216 @@
-# Step 10 - Use an Android Emulator
+# Step 11 - Serve a secure local server
 
-In this step, we're going to test our PWA's behaviour on an emulated device environment.
+Service workers can only be used on a web page with a secure connection, served over https protocol.
 
-In order to use an emulator, we have to install Android Studio first.
+Execute `npm run server` command to run a local http server. When you run a local http server on localhost/127.0.0.1, Chrome makes an exception to run service workers on this non-secure origin to help developers maintain their dev environment. You can see your service worker in action when you reach your local http server over http://localhost:8080
 
-## Download Android Studio
+Emulated devices access to our computer network over `10.0.2.2` IP address. So, the exception that Chrome does on `localhost` origin does not apply to emulated device because the origin over there is different - `10.0.2.2`.
 
-Navigate to [Android Studio download page](https://developer.android.com/studio#downloads) and download the latest version for your OS.
+In this step, we're going to emulate a secure Firebase hosting environment on our local device. It will shorten the feedback loop of testing our app on a production like environment - avoiding deployment every time we make a change.
 
+## Inspect non-secure server on the emulated device
 
-## Install Android Studio
+Execute `npm run server` command to run a local http server. The server should be accessible via your computer over http://localhost:8080 and service workers should be enabled when accessed over localhost.
 
-You need to customize the installation and select `Android Virtual Device` during the setup.
+Launch an emulated device on Android Studio AVD. Open Chrome on emulated mobile device and navigate to http://10.0.2.2:8080.
 
-![Install Android Studio](https://user-images.githubusercontent.com/2641384/73658069-e8514b00-4693-11ea-9a72-23385c3e7c32.png)
+![Non secure](https://user-images.githubusercontent.com/2641384/73658220-467e2e00-4694-11ea-9c1f-65637e106ec0.png)
 
-## Configure Android Studio SDK
+Open Chrome DevTools Remote Devices to inspect the remote mobile device. You should see the following error on your console.
 
-Launch Android Studio, click `Configure` toggle with the gear icon and select `Preferences`.
+`Error: Service workers are disabled or not supported by this browser`
 
-![Configure Android Studio](https://user-images.githubusercontent.com/2641384/73658127-120a7200-4694-11ea-9e65-a365612780f7.png)
+![ Non secure SW](https://user-images.githubusercontent.com/2641384/73658221-467e2e00-4694-11ea-8303-3f7ef06fbe6a.png)
 
-### Install Android Emulator
+## Generate a local certificate
 
-Search for `sdk` in Preferences pane. And, using the search results, navigate to `Appereance & Behaviour` > `System Settings` > `Android SDK` menu.
+We're going to use `mkcert` library to generate a key and certificate. 
 
-![SDK Tools Search](https://user-images.githubusercontent.com/2641384/73658170-2fd7d700-4694-11ea-84cf-e239917fb7c8.png)
+mkcert automatically creates and installs a local CA in the system root store, and generates locally-trusted certificates. mkcert does not automatically configure servers to use the certificates though, we'll do that manually later on.
 
-Within `SDK Tools` pane, click the download icon next to `Android Emulator` to install the emulator library.
+### Install mkcert
 
-![Android Emulator](https://user-images.githubusercontent.com/2641384/73658171-2fd7d700-4694-11ea-899e-318a97d12efc.png)
+Execute following commands to install mkcert with brew if you're using macOS.
 
-## Create a Virtual Device using AVD
+```
+brew install mkcert
+brew install nss
+```
 
-Launch Android Studio and launch `AVD Manager` from `Configure` toggle.
+If you use another OS, see mkcert docs for installation guidelines: https://github.com/FiloSottile/mkcert
 
-![Launch AVD Manager](https://user-images.githubusercontent.com/2641384/73658173-2fd7d700-4694-11ea-90a5-74e3569f6454.png)
+### Generate a key and certificate for our origins
 
-Click `Create Virtual Device` button on Android Virtual Device Manager.
+mkcert can generate a key and certificate to secure multiple origins. We're going to target `localhost`, `127.0.0.1`, and of course `10.0.2.2` origins. 
 
-![Create Virtual Device](https://user-images.githubusercontent.com/2641384/73658174-2fd7d700-4694-11ea-9f71-c3a7913b7943.png)
+Execute the following command in your project root to generate a key and certificate file.
 
-### Select a hardware
+```
+mkcert localhost 10.0.2.2 127.0.0.1
+```
 
-From `Select Hardware` panel, search for `Pixel 2` and click `Next` to install and configure the hardware profile.
+You should have 2 files showed up in you project's root folder:
 
-![Select Hardware](https://user-images.githubusercontent.com/2641384/73658175-2fd7d700-4694-11ea-9992-da3b7ffee23b.png)
+```
+localhost+2.pem
+localhost+2-key.pem
+```
 
-## Launch the installed virtual device
+### Add the pem files to `.gitignore`
 
-Now you can see your installed hardware in the list of devices shown at `AVD Manager`.
+Since the key and certificate file we just generated are unique to our setup, we need to ignore them in project.
 
-![Your Virtual Devices](https://user-images.githubusercontent.com/2641384/73658176-30706d80-4694-11ea-8594-1c0b8af2d5bc.png)
+Open `.gitignore` file and add the following line to ignore all the files with `.pem` extension:
+```
+*.pem
+```
 
-Click on the `Play/Launch` icon in the actions column to launch the emulator.
+## Create a node middleware to serve a secure server
 
-Your emulator is now ready to use.
+We were using `superstatic` package from the start on when we execute `npm run server` and `npm run build:serve`. 
 
-![Emulator View](https://user-images.githubusercontent.com/2641384/73658177-30706d80-4694-11ea-8c1d-6bcaca9a5b78.png)
+You can see how those scripts are translated into `superstatic` commands by inspecting the `package.json` file in the project.
 
-## Enable developer mode on your virtual device
+[Superstatic](https://github.com/firebase/superstatic) is a static HTTP server library built by firebase dev teams which allows you to configure SPAs utilizing History API, and it's configuration is as same as Firebase hosting configuration. So, it's a perfect fit in our stack.
 
-Navigate to `Settings` > `About emulated device` screen on your emulated device.
+Here, we will add a nodejs middleware to serve superstatic server over HTTPS protocol.
 
-Tap on `Build number` at the bottom of the screen 7 times to enable developer mode :) 
+### Create a new server folder 
 
-![Build Number](https://user-images.githubusercontent.com/2641384/73658178-31090400-4694-11ea-846d-365a8f12be26.png)
+Create a new `server` folder in your project root. And, create a new `https.js` file in it.
 
-You can find more information about Android Developer Mode and USB debugging on the article: [Enable Developer Mode and USB debugging](https://developer.android.com/studio/debug/dev-options.html#enable)
+### Add the middleware script
 
-## Inspect Chrome via USB debugging
+Open `https.js` file you've just created, located in `server` folder.
 
-When developer mode is enabled, USB debugging is enabled for the emulated device automatically. 
+Copy the below middleware code to it:
 
-You can start inspecting the Chrome tabs on your emulated device by opening `DevTools` on your desktop Chrome, and navigating to `Remote devices` panel.
+```javascript
+const superstatic = require('superstatic');
+const connect = require('connect');
+const https = require('https');
+const fs = require('fs');
 
-Once you click `Android SDK built for x86` device on the left sidebar, you'll be able to see all the chrome processes on the device. 
+const keyFile = process.argv[2];
+const certFile = process.argv[3];
 
-Click on `Inspect` button next to the process you'd like to inspect and that's it!
+const spec = {
+  config: {
+    public: './www',
+    rewrites: [{
+      source: '**',
+      destination: '/index.html'
+    }]
+  },
+  cwd: process.cwd()
+};
 
-![Remote Devices](https://user-images.githubusercontent.com/2641384/73658179-31090400-4694-11ea-9a8e-0a0ff2ced584.png)
+const httpsOptions = {
+  key: fs.readFileSync(keyFile),
+  cert: fs.readFileSync(certFile)
+};
 
-To find out more about Chrome DevTools remote device debugging, visit official docs: https://developers.google.com/web/tools/chrome-devtools/remote-debugging#discover
+const app = connect().use(superstatic(spec));
+
+https.createServer(httpsOptions, app).listen(443, (err) => {
+  if (err) { console.log(err); }
+  console.log('Superstatic serves at https://10.0.2.2 on emulator and at https://localhost on desktop ...');
+});
+```
+
+### Add the HTTP redirection to the middleware
+
+One of the PWA audits of Lighthouse is about HTTP redirection. It expects the server that hosts the PWA to redirect to a secure protocol when users requested a non-secure HTTP protocol.
+
+Add the following to the end of the `https.js` file:
+
+```javascript
+// Redirect to https
+const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+  res.end();
+}).listen(80);
+```
+
+This will handle 301 redirects when the origin is accessed over a non-secure HTTP protocol.
+
+### Test the secure protocol on your computer
+
+Execute the following command in your project root to run the middleware script with the key and certificate arguments pointing out the files you've created in your project root.
+
+```
+node server/https.js localhost+2-key.pem localhost+2.pem
+```
+
+Now your secure local server should be up and running. Try to navigate to your app with https://localhost or https://127.0.0.1 urls.
+
+## Update npm scripts for easier node execution
+
+Open `package.json` file and add the following scripts right below `server` script:
+
+```json
+"server:https": "node server/https.js localhost+2-key.pem localhost+2.pem",
+"build:serve:https": "npm run build:prod",
+"postbuild:serve:https": "npm run server:https",
+```
+
+From now on, we will run the secure local server by executing `npm run server:https`
+
+When we want to build for production and then serve it on a local server over HTTPS protocol, we're going to execute `npm run build:serve:https`
+
+## Access to your secure local server on emulated mobile device
+
+Launch your emulated mobile device using Android Studio AVD. Over the Chrome app in your emulated mobile device, navigate to https://10.0.2.2 address.
+
+You should be getting `Your connection is not private` error on Chrome.
+
+![SSL Error](https://user-images.githubusercontent.com/2641384/73658222-4716c480-4694-11ea-8d39-694239f06a3c.png)
+
+This is the expected behaviour because `mkcert` root certificate is not installed on the device yet.
+
+Tap on `Advanced` and then tap again on `Proceed to 10.0.2.2 (unsafe)`.
+
+![Unsafe](https://user-images.githubusercontent.com/2641384/73658223-4716c480-4694-11ea-8cbb-f265db706f52.png)
+
+Now you can access to the app but since the connection is not safe, your service worker is not registered, and Chrome does not display `Add to home screen` bar. 
+
+Let's install the missing root certificate on emulated device to fix both of those issues.
+
+### Install mkcert root certificate on emulated device
+
+Execute the following script on your computer to locate the directory keeping the root certificate:
+
+```
+mkcert -CAROOT
+```
+
+Navigate to the folder keeping the root certificate and drag and drop the key and the cert files `rootCA-key.pem`, `rootCA.pem` to the emulated device. 
+
+Dragged files are uploaded to `Downloads` folder of the emulated device.
+
+#### Install the certificate
+
+Within the mobile device, navigate to:
+
+`Settings` > `Security & Location` > `Encryption & Credentials` > `Install from SD Card` > `Downloads` screen. 
+
+![Uploaded files](https://user-images.githubusercontent.com/2641384/73658225-4716c480-4694-11ea-951e-96393dd718a5.png)
+
+Tap on `rootCA.pem` file to install the root certificate. Give any name to the cert and proceed with the installation.
+
+![Install root cert](https://user-images.githubusercontent.com/2641384/73658227-4716c480-4694-11ea-9903-a19fc3d2ce2f.png)
+
+### Test the secure protocol on emulated device
+
+On your emulated device, close the Chrome app and relaunch it. Then navigate to https://10.0.2.2 address. 
+
+![Test root cert](https://user-images.githubusercontent.com/2641384/73658232-47af5b00-4694-11ea-83c6-029c07e8c1eb.png)
+
+Now you can enjoy a secure connection on emulated device environment. You should see the mini A2HS bar showing up at the bottom of the screen.
+
+![Mini info bar](https://user-images.githubusercontent.com/2641384/73658260-5138c300-4694-11ea-935d-b5133022769e.png)
 
 ## Good to go 🎯
 
-Now you can continue to Step 11 -> [Serve a secure local server](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-11/README.md).
+Now you can continue to Step 12 -> [Test the A2HS functionality on Android](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-12/README.md).
