@@ -1,394 +1,383 @@
-# Step 14 - Subscribe to push notifications and manage permission
+# Step 15 - Send and receive push notifications
 
-Most of the push notification examples you find on the internet are related to FCM - Firebase Cloud Messaging. 
+In previous chapter, we have done all the necessary preparations on the client side to receive a push notification. 
 
-It's a robust service from Google but it's also an additional dependency on both server and client side. You have to introduce an additional service worker, a client library for subscriptions and so on.
+In this step, we will build the server side foundation to send a notification and we will improve our UI to create better engagements and interactions over the received notifications.
 
-We're going to implement a push notification service instead via using a server having VAPID - Voluntary Application Server Identification. If you're curious how VAPID and WebPush protocol works, [you can read more about it here](https://developers.google.com/web/fundamentals/push-notifications/web-push-protocol).
+## Send VAPID identified Web Push notifications
 
-![Web Push Protocol](https://developers.google.com/web/fundamentals/push-notifications/images/svgs/server-to-push-service.svg)
+We need to build a server side script to send the push notifications by using the keys that we generated in previous step. Those are required for VAPID identification. 
 
-As Angular's NGSW module supports VAPID based web push implementations, we'll be able to utilize Angular's SwPush service to manage the push notification subscriptions and to display received messages.
+![VAPID identification](https://developers.google.com/web/fundamentals/push-notifications/images/svgs/application-server-key-send.svg)
 
-## Setup a Web Push server with VAPID on Firebase
+We will also use the push subscription we receive on our client when we call `requestSubscription()` over NGSW's SwPush service.
 
-It's possible to build your own Web Push server by implementing VAPID and Web Push protocol. There are lots of tutorials and docs on the internet about it.
+A Push subscription is literally the destination definition for our messages.
 
-However, for the sake of time management, we're going to use FCM's Web Push protocol instead of building our own push server.
+### Install web-push library
 
-### Setup Firebase Cloud Messaging API key
+[web-push](https://github.com/web-push-libs/web-push/) is a library we're going to use to simplify the identification and the request flow needed for sending Web Push notification. 
 
-Navigate to `Project Settings` > `Cloud Messaging` tab in your Firebase console.
+It automates the authentication and modifies the request headers required for sending a push notification request.
 
-<img width="509" alt="14-1-fire-project-settings" src="https://user-images.githubusercontent.com/2641384/73658317-69104700-4694-11ea-89f3-77e71d420e27.png">
+Execute the following command to install the package along with dotenv for the constants to use with:
 
-Click on `Add server key` button. Copy and paste this key to your notes, `firebase-server-api-key={yourKey}`.
-
-<img width="684" alt="14-2-fire-add-server-key" src="https://user-images.githubusercontent.com/2641384/73658318-6a417400-4694-11ea-8224-eec8b834ede7.png">
-
-Copy the `Sender ID` to your notes `gcm-sender-id={yourId}`.
-
-### Generate Web Push certificate
-
-Within the `Cloud Messaging` tab in your Firebase console, scroll down to `Web configuration` section.
-
-<img width="667" alt="14-3-fire-web-push-gen" src="https://user-images.githubusercontent.com/2641384/73658319-6ada0a80-4694-11ea-995d-ae1164e8d02a.png">
-
-Click on `Generate key pair` button. Copy and paste this key to your notes, `firebase-web-push-public-vapid-key={yourKey}`.
-
-<img width="677" alt="14-4-fire-copy-public-key" src="https://user-images.githubusercontent.com/2641384/73658320-6ada0a80-4694-11ea-8fe5-ca94c951a24c.png">
-
-Click on the three dots button when hovered on the public key to see the options. Select `Show private key` option to display the private key.
-
-<img width="555" alt="14-5-fire-copy-private-key" src="https://user-images.githubusercontent.com/2641384/73658321-6ada0a80-4694-11ea-8533-6b858cd6db23.png">
-
-Copy and paste this key to your notes, `firebase-web-push-private-vapid-key={yourKey}`.
-
-> It's very important to note that, keys we noted at this step should be secret, especially the private one. Having them exposed to outside world might cause a breach to your app, letting anyone who has them to send any message they want to your users.
-> 
-> I intentionally did not obfuscate the keys in the images, but rest assured, they're all invalidated :)
-
-## Subscribe to push notifications
-
-SwPush is an Angular service from `@angular/service-worker` module. Please take a moment to check out the [API docs on Angular website](https://angular.io/api/service-worker/SwPush).
-
-### Inject SwPush service in your component
-
-Open your `app.component.ts` file and inject SwPush service to your constructor:
-
-```typescript
-import { SwPush } from '@angular/service-worker';
-
-export class AppComponent implements OnInit {
-  constructor(
-    private swPush: SwPush,
-  ) {}
-}
+```
+npm i -D web-push dotenv
 ```
 
-### Subscribe to Web Push
+### Create a new env file
 
-Again, in your `app.component.ts` file, add the following method to request permission for push notifications and subscribe to the remote Web Push service.
+We should always keep our keys and secret and ideally other environment related configuration variables in a `.env` file in our project. 
 
-Use `firebase-web-push-public-vapid-key` from your notes of keys as a value for `serverPublicKey` option.
+This will not only help us to keep variables secure, it will also help on configuring variables on a server environment later on.
+
+Create a new file with the name `.env` in your project's root folder. Add the following content to it:
+
+```
+FIREBASE_SERVER_API_KEY="put-your-key-from-your-notes-here"
+FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY="put-your-key-from-your-notes-here"
+FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY="put-your-key-from-your-notes-here"
+EMAIL_FOR_SUBJECT="put-your-email-address-here"
+```
+
+You should update the variables with the earlier notes you took.
+
+Update `.gitignore` file and add `.env` field to the list of ignored files.
+
+### Create a new server script
+
+Create a new file with the name `sendPush.js` in `server` folder.
+
+
+Add the following code block to the new `sendPush.js` file:
+
+```javascript
+const webpush = require('web-push');
+
+webpush.setGCMAPIKey(process.env.FIREBASE_SERVER_API_KEY);
+webpush.setVapidDetails(
+  `mailto:${process.env.EMAIL_FOR_SUBJECT}`,
+  process.env.FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY,
+  process.env.FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY
+);
+
+// This is the output of calling JSON.stringify on a PushSubscription you receive on your client
+// Copy paste the console log of push subscription from the receiver client here
+const pushSubscription = {
+  endpoint: '...',
+  keys: {
+    auth: '...',
+    p256dh: '...'
+  }
+};
+
+const notificationPayload = {
+  notification: {
+    title: 'Session is about the start 🏃‍♀️',
+    body: '"Community Interaction" by Gino Giraffe is starting in Hall 3.',
+    icon: 'assets/pwa/manifest-icon-192.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+    },
+    actions: []
+  }
+};
+
+webpush.sendNotification(pushSubscription, JSON.stringify(notificationPayload));
+```
+
+### Send a push notification
+
+Now it's time to test sending the push notification on either your desktop or emulated mobile device, or both! 
+
+Navigate to your PWA on the device you'd like to test and inspect the console logs there.
+
+<img width="592" alt="15-1-push-subs" src="https://user-images.githubusercontent.com/2641384/73658344-73cadc00-4694-11ea-8878-0884dbc740a6.png">
+
+Copy the stringified PushSubscription object to your `sendPush.js` script.
+
+Execute the script by running the following command from your root directory:
+
+```
+node -r dotenv/config server/sendPush.js
+```
+
+You should be seeing the pushed notification on your mobile device. 
+
+<img width="504" alt="15-2-push-test" src="https://user-images.githubusercontent.com/2641384/73658345-73cadc00-4694-11ea-9a7f-ba225478caf3.png">
+
+Now close the Conf app and test sending the push notification again. Thanks to service workers working on a background thread, you should be still getting the push notification even though the app is closed.
+
+### Update package.json
+
+As we're going to execute sending push notifications more often, let's move our script to a new npm script in the package.json file.
+
+Open `package.json` file and add the following script amongst `scripts`:
+
+```json
+"push": "node -r dotenv/config server/sendPush.js"
+```
+
+From now on, we will execute `npm run push` to send push notifications.
+
+## Add actions to your notifications
+
+Notifications can introduce additional actions for the users. We're going to leverage this feature by adding 2 actions to our notification payload.
+
+We're going to provide the `action` data in a format of `actionType:id`. We'll be using those fields during the following steps.
+
+Open `sendPush.js` file and change the `actions` array in notification payload object with the following:
+
+```json
+actions: [
+  {
+    action: 'session:10',
+    title: 'Session info 👉',
+  },
+  {
+    action: 'speaker:6',
+    title: 'Speaker info 🗣',
+  }
+]
+```
+
+Execute the script by running the following command from your root directory:
+
+```
+npm run push
+```
+
+You should now see a notification with 2 actions, pushed to your device. 
+
+<img width="508" alt="15-3-push-actions-diff" src="https://user-images.githubusercontent.com/2641384/73658346-73cadc00-4694-11ea-9a6f-e766119889b2.png">
+
+### Optional: Experiment with `text` action type
+
+Replace actions array with the following to experiment with the `text` action type.
+
+```json
+actions: [
+  {
+    action: 'reply',
+    type: 'text',
+    title: 'What\'s your name? 👇',
+    placeholder: 'Respond to organizers',
+  }
+]
+```
+
+Test the new action on both your desktop and mobile browser.
+
+## Handle notification clicks
+
+When you click on the notification or on any of the recently added actions, nothing happens for now because we haven't handled the notification clicks yet. 
+
+We're going to setup a notification click handler to navigate to certain pages based on **action type** and **id** values we get from notification actions.
+
+### Add a notification click handler 
+
+Angular's `SwPush` service has [a built-in notification handler interface](https://angular.io/api/service-worker/SwPush#notificationClicks) and we're going to implement it in our app.
+
+Open `app.component.ts` file and add the following 2 methods:
 
 ```typescript
-subscribeToWebPush() {
-  this.swPush.requestSubscription({
-    serverPublicKey: `${firebase_web_push_public_vapid_key}`,
-  }).then((sub) => {
-    console.log('subscribeToWebPush successful');
-    console.log(JSON.stringify(sub));
-  }).catch((err) => {
-    console.log('subscribeToWebPush error', err);
+navigateOnNotificationClick(notificationAction: string) {
+  const [action, id] = notificationAction.split(':');
+
+  if (action === 'speaker') {
+    this.router.navigateByUrl(`/app/tabs/speakers/speaker-details/${id}`);
+  } else if (action === 'session') {
+    this.router.navigateByUrl(`/app/tabs/schedule/session/${id}`);
+  }
+}
+
+subscribeToNotificationClicks() {
+  this.swPush.notificationClicks.subscribe(msg => {
+    console.log('notification click', msg);
+
+    // If there's no action in notification payload, do nothing
+    if (!msg.action) {
+      return;
+    }
+
+    this.navigateOnNotificationClick(msg.action);
   });
 }
 ```
 
-Temporarily call `subscribeToWebPush()` method on `ngOnInit()` method of your `AppComponent` class to test the functionality at this stage:
+Also, navigate to `ngOnInit()` method to add `subscribeToNotificationClicks()` call on component init:
 
 ```typescript
 async ngOnInit() {
-  this.subscribeToWebPush();
+  this.subscribeToNotificationClicks();
 }
 ```
 
-### Test the Web Push subscription
-
-As this is a Service Worker based functionality, we need to build our app for production in order to test it. 
+### Test the notification clicks
 
 Execute `npm run build:serve:https` in your command line OR `npm run build:prod` if your HTTPS server is already running.
 
-Navigate to `https://localhost` in your browser and inspect the console logs. 
+You might need to close the app and restart again to see your  changes take place.
 
-You should be getting a permission request for notifications and when allowed, a subscription log should appear in your console.
+Send a new push notification by running `npm run push` and click on any of the actions in your device over the received push notification.
 
-<img width="641" alt="14-7-push-object" src="https://user-images.githubusercontent.com/2641384/73658324-6b72a100-4694-11ea-973e-987279d8adf3.png">
+Now, you can see your app navigating to different pages based on the action type and id you provide within your notification payload.
 
-#### Managing the notification permissions
+However, there's one UX issue we need to tackle. If our app is in the background, an action click does not bring our app in front. It still handles the navigation but we can only see the navigated page once we bring the app to the foreground again.
 
-You can manage the permissions of your browser for testing purposes by pasting this url to your address bar: `chrome://settings/content/notifications`. Alternatively, you can click on the `Lock` icon next to the address bar to manage the permissions for a single app.
+## Extend NGSW capabilities with `focus to app on notification click` feature
 
-<img width="323" alt="14-6-manage-notf-perm" src="https://user-images.githubusercontent.com/2641384/73658322-6ada0a80-4694-11ea-854f-c4e905e75cc2.png">
+Angular's `SwPush` service does not implement [`openWindow` interface of Service Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Clients) neither the [focus method](https://developer.mozilla.org/en-US/docs/Web/API/WindowClient/focus). This prevents focusing to our app on a notification click.
 
-> When user denies the notification permission, you cannot finalize the subscription via SwPush service. 
-> 
-> You need to inform and guide your users on enabling the notifications once again, using [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission).
+We need to extend NGSW's capability to focus on our PWA on notification click.
 
-## Add GCM id to your manifest file
+### Implement a custom Service Worker functionality to handle focus
 
-Although the need for `gcm_sender_id` in manifest file is deprecated for Chrome, it is still [required for Chrome prior to version 52, Opera Android, and Samsung Internet](https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#sending_a_push_message_using_firebase_cloud_messaging).
+Open `src/sw/main-sw.js` file to add your custom service worker code. Replace the file contents with the block below:
 
+```javascript
+importScripts('ngsw-worker.js');
 
-Copy `gcm-sender-id` from you notes and paste it to your `manifest.webmanifest` file:
+function navigateOnNotificationClick(notificationAction) {
+  const [action, id] = notificationAction.split(':');
 
-```json
-"gcm_sender_id": "yourId"
-```
-
-## Setup a good permission UX
-
-Asking for notification permissions immediately when your user visited your app for the first time can be really annoying. 
-
-This behaviour has been used by many websites to spam their visitors for a long time and users have developed an immediate denial reaction against them in time. 
-
-There's a Lighthouse audit to increase the awareness against such developer action, documented as [Avoids Requesting The Notification Permission On Page Load](https://developers.google.com/web/tools/lighthouse/audits/notifications-on-load). Moreover, there will be a Chrome feaure implementation automatically preventing such behaviour soon.
-
-Any engagement with your users has to be meaningful and with a thorough reasoning, triggered by your users own action and consent. 
-
-Take a moment to read about [building a good permission UX on the web](https://developers.google.com/web/fundamentals/push-notifications/permission-ux).
-
-### Build a permission request UI
-
-We're going to add a card element to inform our users about app's notifications feature. 
-
-This will be a further engagement channel, provided only to the users who added the app to their home screens.
-
-#### Prevent notification permission request on ngOnInit()
-
-As you might remember, we added `subscribeToWebPush()` method call to `ngOnInit()` to test the notification permissions before.
-
-When we call `requestSubscription()` method on `SwPush` service, it does 2 things;
-
-* Requests notification permission if it's not granted yet.
-* Subscribes to Web Push server to receive push notifications.
-
-We need to split requesting permission flow from subscribing to Web Push server logic. Because what we want is to subscribe to Web Push server on component init. And, we want to trigger permission request with a custom UI only after certain engagement criteria, not on component init.
-
-Open `app.component.ts` file and navigate to `subscribeToWebPush()` method. Add the following if condition to only subscribe to Web Push server if notifications are granted for our origin.
-
-```typescript
-subscribeToWebPush() {
-  if ('Notification' in window && Notification.permission === 'granted') {
-  
-    this.swPush.requestSubscription({
-      serverPublicKey: `${firebase_web_push_public_vapid_key}`,
-    }).then((sub) => {
-      console.log('subscribeToWebPush successful');
-      console.log(JSON.stringify(sub));
-    }).catch((err) => {
-      console.log('subscribeToWebPush error', err);
-    });
-    
+  if (action === 'speaker') {
+    return clients.openWindow(`/app/tabs/speakers/speaker-details/${id}`);
+  } else if (action === 'session') {
+    return clients.openWindow(`/app/tabs/schedule/session/${id}`);
   }
+
+  return clients.openWindow(`/`);
 }
-```
 
-#### Add a notification permission info card to the side menu
-
-Add a new `ion-card` element, right below the install promotion card in `app.component.html` file.
-
-```html
-<ion-card button color="tertiary" 
-  *ngIf="!isInstallPromotionDisplayed" 
-  (click)="requestNotificationPermission()">
-  
- <ion-card-header>
-   <ion-card-title>Enable notifications</ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-    Do not miss announcements from organizers and get reminders on your favorite sessions!
-  </ion-card-content>
-
-  <ion-item>
-    <ion-thumbnail slot="start">
-      <img src="assets/img/ica-slidebox-img-2.png" alt="A fancy mobile device">
-    </ion-thumbnail>
-    <ion-button color="danger"><ion-icon name="notifications" slot="start"></ion-icon>REQUEST PERMISSION</ion-button>
-  </ion-item>
-  
-</ion-card>
-```
-
-As you might have noticed the `*ngIf` expression, we only display this card if the app is added to the home screen.
-
-We also now have the notification permission request pointing out to a method called `requestNotificationPermission()`. Let's create that method.
-
-### Create a permission request method
-
-Open `app.component.ts` file and create a new method with the name `requestNotificationPermission`. 
-
-We also need to add one new property - `showBackdrop`.
-
-Update your component with the following property and method:
-
-```typescript
-showBackdrop = false;
-
-requestNotificationPermission() {
-  // We will use the backdrop to create user focus on permission dialog
-  this.showBackdrop = true;
-
-  if ('Notification' in window) {
-    Notification.requestPermission().then((permission: NotificationPermission) => {
-      this.showBackdrop = false;
-      
-      if (permission === 'granted') {
-        console.log('Notification permission is granted');
-    
-        // Since we have the permission now, let's subscribe to Web Push server
-        this.subscribeToWebPush();
-      } else {
-        console.log('Notification permission is not granted: ', permission);
-      }
-    }).catch((err) => {
-      console.log('Error on requestNotificationPermission', err);
-      this.showBackdrop = false;
+addEventListener('notificationclick', event => {
+  event.waitUntil(async function() {
+    const allClients = await clients.matchAll({
+      type: 'window'
     });
-  }
-}
+    console.log('Inspect all the clients attached to the sw', allClients);
+
+    let pwaClient;
+
+    // Focus if there's only one client
+    if (allClients.length === 1) {
+      pwaClient = allClients[0];
+      pwaClient.focus();
+    }
+
+    // TODO: replace the code block above with the following when it's possible to preserve search params globally in Angular
+    // https://github.com/angular/angular/issues/12664
+    // for (const client of allClients) {
+    //   const url = new URL(client.url);
+    //   const utmSource = url.searchParams.get('utm_source');
+    //   console.log(client, url);
+    //
+    //   if (utmSource === 'home_screen') {
+    //     client.focus();
+    //     pwaClient = client;
+    //     break;
+    //   }
+    // }
+
+    // If there's no active client, focus by calling openWindow()
+    if (!pwaClient) {
+      pwaClient = await openWindowByAction(event.action || (event.notification.actions && event.notification.actions.length ? event.notification.actions[0].action : null));
+    }
+  }());
+});
 ```
 
-### Add a backdrop to the background
+The code above first checks if there's a client running on the device attached to the service worker and it focuses to it. If no client is running, it triggers a run by calling `openWindow()` method.
 
-Now that we have a new state in our component assigned to the property `showBackdrop`, we can use it to toggle a backdrop display in our app to catch our users' focus to the prompts.
-
-Open `app.component.html` template file and add the following line right **in** to `ion-app` element, on top of all other elements:
-
-```html
-<ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
-```
-
-Open `app.component.scss` file and add the following element style:
-
-```css
-ion-backdrop {
-  opacity: 0.8;
-  background: #000;
-}
-```
-
-#### Display backdrop also when A2HS prompt is shown
-
-Since we have the backdrop in place, we can use the same UI pattern to catch our users' focus when we prompt with A2HS dialog.
-
-Replace the `showInstallPrompt()` method in `app.component.ts` file with the following:
-
-```typescript
-showInstallPrompt() {
-  this.showBackdrop = true;
-  
-  // Show the prompt
-  this.deferredPrompt.prompt();
-  
-  // Wait for the user to respond to the prompt
-  this.deferredPrompt.userChoice
-    .then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        // Hide the install promotion UI as user just installed it
-        this.isInstallPromotionDisplayed = false;
-        console.log('User accepted the A2HS prompt');
-      } else {
-        console.log('User dismissed the A2HS prompt');
-      }
-      this.deferredPrompt = null;
-      this.showBackdrop = false;
-    }).catch(() => {
-      this.showBackdrop = false;
-    });
-}
-```
-
-### Reflect notification permission status to our UI
-
-Our UI currently is not aware of the notification permission status of the browser. 
-
-We're going to bind `Notification.permission` constant from [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API) to our UI elements.
-
-[Notification permission](https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission) constant can have 3 values;
-
-* default
-* denied
-* granted
-
-#### Create a new class property and bind it to Notifications API
-
-In order to bind DOM API's to Angular's template syntax, we need to assign the API to a class property.
-
-Open `app.component.ts` file and add the following property to your class:
-
-```typescript
-Notification = Notification;
-// It's a shorthand of:
-// public Notification = Notification;
-```
-
-This might look strange at first but it's a big enabler of an access to DOM APIs along with syntax highlighting on Angular templates. 
-
-#### Update the condition to display notification permission UI
-
-We should only display the notification permission UI if user did not react on it yet. 
-
-In order to meet that goal, we're going to introduce a new expression `Notification?.permission === 'default'` in the if block of our card element. 
-
-Did you notice the `?` elvis operator? Optional chaining was available on Angular templates for a long time. This prevents our app to throw exceptions on browser which does not have the API in place.
-
-Open `app.component.html` file and navigate to the `ion-card` element holding the notification UI. Update the `ion-card` template tag with the following:
-
-```html
-<ion-card button 
-    color="tertiary"
-    *ngIf="!isInstallPromotionDisplayed && Notification?.permission === 'default'"
-    (click)="requestNotificationPermission()">
-```
-
-#### Add a toggle to display the notification status
-
-The status of the notification permission can be difficult to be located and seen on some browsers and devices by users.
-
-We're going to display a disabled toggle to reflect the status to our UI.
-
-Open `app.component.html` file and the following HTML block right next to `ion-list` element holding the `Dark Theme` toggle:
-
-```html
-<ion-list *ngIf="!isInstallPromotionDisplayed">
-  <ion-item lines="none">
-    <ion-label>
-      Notifications
-    </ion-label>
-    <ion-toggle disabled [checked]="Notification?.permission === 'granted'"></ion-toggle>
-  </ion-item>
-  <ion-item lines="none">
-    <ion-note>Use browser settings to manage notifications.</ion-note>
-  </ion-item>
-</ion-list>
-```
-
-### Optional: Provide an option to opt-out
-
-With the current [Permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API), it's not possible to revoke a permission yet. 
-
-You can introduce an additional state to keep user preference on receiving the notifications. Browser storage APIs like IndexedDB can be a good start to keep such preference but ideally you might want to keep this data on a DB in server, related to a user id.
-
-### Test the permission UX
+### Test the notification clicks
 
 Execute `npm run build:serve:https` in your command line OR `npm run build:prod` if your HTTPS server is already running.
 
-Navigate to https://localhost and add the app to home screen using the install promotion UI to see the permissions UI.
+You might need to close the app and restart again to see your  changes take place.
 
-<img width="685" alt="14-12-perm-ux-desktop" src="https://user-images.githubusercontent.com/2641384/73658333-6c0b3780-4694-11ea-82f1-b9716dd10b32.png">
+Put your app in the background and send a new push notification by running `npm run push`. Click on any of the actions in your device over the received push notification.
 
-<img width="511" alt="14-11-perm-ux-mobile" src="https://user-images.githubusercontent.com/2641384/73658332-6c0b3780-4694-11ea-86f5-13c7ed981574.png">
+Now, you can see your app coming in to foreground.
 
-#### How to test the permissions
+<img width="507" alt="15-4-push-click" src="https://user-images.githubusercontent.com/2641384/73658347-74637280-4694-11ea-96a3-f80933a229f5.png">
 
-In order to make a good test on the permission UX, we need to know how to change the permissions.
+Repeat the same flow by first closing the app and then sending a push notification to test the `openWindow()` functionality.
 
-On desktop, you can click on the **lock** icon next to the address bar to also manage the notification permission. 
+## Receive notifications in your client app
 
-<img width="501" alt="14-8-manage-notf-desktop" src="https://user-images.githubusercontent.com/2641384/73658325-6b72a100-4694-11ea-8851-2317a175a003.png">
+You might have noticed that notifications do not pop up on mobile device by default. Even though this behaviour can be configured on the device; many devices don't pop up notifications at all if the app is in the foreground.
 
-If added to home screen on desktop, you can click the **three dots** on right top corner of your standalone app and again clikc on the **lock** icon to manage the permissions.
+We're going to implement [SwPush service's `messages` interface](https://angular.io/api/service-worker/SwPush#messages) to display the pushed messages on an internal UI only when app is in the foreground. 
 
-On emulated mobile device, you can tap on **three dots** on Chrome and tap on **circle i** info button. 
+We will use [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) to detect the app being in the foreground or not.
 
-<img width="515" alt="14-9-manage-notf-mobile" src="https://user-images.githubusercontent.com/2641384/73658327-6b72a100-4694-11ea-9d86-97272c24aed5.png">
+### Display the push messages internally
 
-Then, tap on `Site setting` to view the permissions and data usage. Tap on `Clear & reset` button to reset all.
+Open `app.component.ts` file and add the following method:
 
-<img width="517" alt="14-10-manage-notf-mobile-2" src="https://user-images.githubusercontent.com/2641384/73658329-6b72a100-4694-11ea-861f-a0884f23a8b8.png">
+```typescript
+subscribeToPushMessages() {
+  this.swPush.messages.subscribe((msg: {
+    notification: NotificationOptions & {
+      title: string;
+    }
+  }) => {
+    console.log('Received a message in client app', msg);
+    // Only display the toast message if the app is in the foreground
+    if (document.visibilityState === 'visible') {
+      const classScope = this;
+      const toast = this.toastController.create({
+        showCloseButton: false,
+        duration: 10000,
+        cssClass: 'custom-toast',
+        position: 'top',
+        message: `${msg.notification.title}
+<strong>${msg.notification.body}</strong>`,
+        buttons: msg.notification.actions.map(actionEl => ({
+          side: 'end',
+          text: actionEl.title,
+          handler: function() {
+              classScope.navigateOnNotificationClick(actionEl.action);
+              this.dismiss();
+            }
+        })),
+      });
+      toast.then(res => {
+        res.present();
+      });
+    }
+  });
+}
+```
+
+Also, navigate to `ngOnInit()` method to add `subscribeToPushMessages()` call on component init:
+
+```typescript
+async ngOnInit() {
+  this.subscribeToPushMessages();
+}
+```
+
+### Test internal message display
+
+Execute `npm run build:serve:https` in your command line OR `npm run build:prod` if your HTTPS server is already running.
+
+You might need to close the app and restart again to see your  changes take place.
+
+Put your app in the foreground and send a new push notification by running `npm run push`. 
+
+<img width="504" alt="15-5-internal-msg-ui" src="https://user-images.githubusercontent.com/2641384/73658348-74637280-4694-11ea-8386-222c8ca1b8fe.png">
+
+Now, put your app in the background and send another push notification. Open the app and you shouldn't see the internal message UI.
+
+### Optional: Adjust the CSS of the toast message
+
+As you might have noticed, the message displayed in the default toast UI is not really beautifully aligned. 
+
+Add your own css to customize the look and feel of the message by using `custom-toast` css class.
 
 ## Good to go 🎯
 
-Now you can continue to Step 15 -> [Send and receive push notifications](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-15/README.md).
+Now you can continue to Step 16 -> [Save push subscriptions in a DB](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-16/README.md).
