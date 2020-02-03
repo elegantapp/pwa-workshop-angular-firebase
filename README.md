@@ -1,216 +1,167 @@
-# Step 11 - Serve a secure local server
+# Step 12 - Test the A2HS functionality on Android
 
-Service workers can only be used on a web page with a secure connection, served over https protocol.
+On your emulated device, launch Chrome app and then navigate to https://10.0.2.2 address again.
 
-Execute `npm run server` command to run a local http server. When you run a local http server on localhost/127.0.0.1, Chrome makes an exception to run service workers on this non-secure origin to help developers maintain their dev environment. You can see your service worker in action when you reach your local http server over http://localhost:8080
+Tap on `Add Conf App to Home screen` button on the screen. An A2HS prompt will show up.
 
-Emulated devices access to our computer network over `10.0.2.2` IP address. So, the exception that Chrome does on `localhost` origin does not apply to emulated device because the origin over there is different - `10.0.2.2`.
+<img width="507" alt="12-1-a2hs-prompt" src="https://user-images.githubusercontent.com/2641384/73658277-5a299480-4694-11ea-82f0-c51398f754b2.png">
 
-In this step, we're going to emulate a secure Firebase hosting environment on our local device. It will shorten the feedback loop of testing our app on a production like environment - avoiding deployment every time we make a change.
+Tap on `Add` and proceed with the icon. Your app icon will eventually show up on the home screen.
 
-## Inspect non-secure server on the emulated device
+<img width="510" alt="12-2-shortcut" src="https://user-images.githubusercontent.com/2641384/73658280-5ac22b00-4694-11ea-8edc-eb98735677a9.png">
 
-Execute `npm run server` command to run a local http server. The server should be accessible via your computer over http://localhost:8080 and service workers should be enabled when accessed over localhost.
+You might have seen the `Chrome` badge icon being on your app icon. If that's the case, it's possibly an indication of an app being a shortcut rather than a native app on the home screen. And, your emulated device is bundled with an older version of Chrome. 
 
-Launch an emulated device on Android Studio AVD. Open Chrome on emulated mobile device and navigate to http://10.0.2.2:8080.
+Chrome team introduced a feature called WebAPK for PWA installations. Android creates an APK file on the file while adding a PWA to the home screen and you can manage your app like any other native apps installed on your Android system.
 
-![Non secure](https://user-images.githubusercontent.com/2641384/73658220-467e2e00-4694-11ea-9c1f-65637e106ec0.png)
+If you see the described behaviour, you need to update Chrome to see how WebAPK works. If there's no Chrome icon on top of your app icon, then you can skip updating the Chrome.
 
-Open Chrome DevTools Remote Devices to inspect the remote mobile device. You should see the following error on your console.
+## Update Chrome 
 
-`Error: Service workers are disabled or not supported by this browser`
+Open Chrome app and tap on three dots next to the address bar.
 
-![ Non secure SW](https://user-images.githubusercontent.com/2641384/73658221-467e2e00-4694-11ea-8303-3f7ef06fbe6a.png)
+Tap on `Update Chrome`.
 
-## Generate a local certificate
+<img width="513" alt="12-3-update-chrome" src="https://user-images.githubusercontent.com/2641384/73658281-5ac22b00-4694-11ea-8960-d6bfd9ec4fc7.png">
 
-We're going to use `mkcert` library to generate a key and certificate. 
+You need to sign in with your Google account to the Play Store in order to update Chrome on the emulated device. Do login with your account and finalize the installation of the Chrome update.
 
-mkcert automatically creates and installs a local CA in the system root store, and generates locally-trusted certificates. mkcert does not automatically configure servers to use the certificates though, we'll do that manually later on.
+## Re-test the A2HS functionality
 
-### Install mkcert
+After updating the Chrome, navigate to https://10.0.2.2 address again. Tap on `Add Conf App to Home screen` button on the screen. An A2HS prompt will show up. Proceed with adding the app to the home screen.
 
-Execute following commands to install mkcert with brew if you're using macOS.
+When looked at the home screen, you might have noticed the difference of the WebAPK installation.
 
-```
-brew install mkcert
-brew install nss
-```
+<img width="515" alt="12-4-comparison-webapk" src="https://user-images.githubusercontent.com/2641384/73658282-5b5ac180-4694-11ea-89bc-d0017fafe0bc.png">
 
-If you use another OS, see mkcert docs for installation guidelines: https://github.com/FiloSottile/mkcert
+The app on the app is more like a Chrome shortcut, but the one we've just added is packaged and installed like a native app.
 
-### Generate a key and certificate for our origins
+Validate the PWA behaving like a native installed app on the system by navigation to the following screens:
 
-mkcert can generate a key and certificate to secure multiple origins. We're going to target `localhost`, `127.0.0.1`, and of course `10.0.2.2` origins. 
+`Settings` > `Apps & Notifications` > `See all x apps` > `Conf App`
 
-Execute the following command in your project root to generate a key and certificate file.
+<img width="513" alt="12-5-webapk" src="https://user-images.githubusercontent.com/2641384/73658284-5b5ac180-4694-11ea-9faf-605a00a946f4.png">
 
-```
-mkcert localhost 10.0.2.2 127.0.0.1
-```
+As you can observe, `Conf App` is installed just like any other native app. And, it's much smaller in size compared to other store apps.
 
-You should have 2 files showed up in you project's root folder:
+## Take control of when to display A2HS prompt
 
-```
-localhost+2.pem
-localhost+2-key.pem
-```
+When your PWA meets with [A2HS criteria](https://developers.google.com/web/fundamentals/app-install-banners#criteria), Chrome automatically displays a mini info bar.
 
-### Add the pem files to `.gitignore`
+As it goes for any sort of user engagement, the time to engage with your users is crucial for a better conversion. 
 
-Since the key and certificate file we just generated are unique to our setup, we need to ignore them in project.
+You might want to wait for the right moment to request your user to add your app to their home screen. Such as waiting for a time duration, a navigation pattern, a predicted hot path, and so on.
 
-Open `.gitignore` file and add the following line to ignore all the files with `.pem` extension:
-```
-*.pem
-```
+See [Patterns for Promoting PWA Installation](https://developers.google.com/web/fundamentals/app-install-banners/promoting-install-mobile) for recommended patterns and best practices for notifying the user your PWA is installable.
 
-## Create a node middleware to serve a secure server
+### Prevent the mini-infobar from appearing
 
-We were using `superstatic` package from the start on when we execute `npm run server` and `npm run build:serve`. 
+Starting in Chrome 76, it's possible to prevent the mini-infobar from appearing automatically by calling `preventDefault()` on the `beforeinstallprompt` event.
 
-You can see how those scripts are translated into `superstatic` commands by inspecting the `package.json` file in the project.
+Open `app.component.ts` file and add the following property and method:
 
-[Superstatic](https://github.com/firebase/superstatic) is a static HTTP server library built by firebase dev teams which allows you to configure SPAs utilizing History API, and it's configuration is as same as Firebase hosting configuration. So, it's a perfect fit in our stack.
+```typescript
+deferredPrompt;
 
-Here, we will add a nodejs middleware to serve superstatic server over HTTPS protocol.
+hijackInstallPrompt() {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 76 and later from showing the mini-infobar
+    e.preventDefault();
 
-### Create a new server folder 
+    // Stash the event so it can be triggered later.
+    this.deferredPrompt = e;
 
-Create a new `server` folder in your project root. And, create a new `https.js` file in it.
+    // Toggle the install promotion display
+    this.showInstallPromotion();
+  });
+}
 
-### Add the middleware script
-
-Open `https.js` file you've just created, located in `server` folder.
-
-Copy the below middleware code to it:
-
-```javascript
-const superstatic = require('superstatic');
-const connect = require('connect');
-const https = require('https');
-const fs = require('fs');
-
-const keyFile = process.argv[2];
-const certFile = process.argv[3];
-
-const spec = {
-  config: {
-    public: './www',
-    rewrites: [{
-      source: '**',
-      destination: '/index.html'
-    }]
-  },
-  cwd: process.cwd()
-};
-
-const httpsOptions = {
-  key: fs.readFileSync(keyFile),
-  cert: fs.readFileSync(certFile)
-};
-
-const app = connect().use(superstatic(spec));
-
-https.createServer(httpsOptions, app).listen(443, (err) => {
-  if (err) { console.log(err); }
-  console.log('Superstatic serves at https://10.0.2.2 on emulator and at https://localhost on desktop ...');
-});
+showInstallPromotion() {
+  // TODO: Toggle the install promotion display
+}
 ```
 
-### Add the HTTP redirection to the middleware
+### Add a custom install promotion display
 
-One of the PWA audits of Lighthouse is about HTTP redirection. It expects the server that hosts the PWA to redirect to a secure protocol when users requested a non-secure HTTP protocol.
+Within the `app.component.ts` file, add the following property and implement the functionality of the `showInstallPromotion()` method.
 
-Add the following to the end of the `https.js` file:
+```typescript
+isInstallPromotionDisplayed = false;
 
-```javascript
-// Redirect to https
-const http = require('http');
-http.createServer((req, res) => {
-  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-  res.end();
-}).listen(80);
+showInstallPromotion() {
+  this.isInstallPromotionDisplayed = true;
+}
 ```
 
-This will handle 301 redirects when the origin is accessed over a non-secure HTTP protocol.
+Then, open `app.component.html` file to add the custom install promotion UI in `ion-menu` element right after `ion-header`:
 
-### Test the secure protocol on your computer
+```html
+<ion-card button color="tertiary" *ngIf="isInstallPromotionDisplayed">
+  <ion-card-header>
+    <ion-card-title>Add to home screen</ion-card-title>
+  </ion-card-header>
 
-Execute the following command in your project root to run the middleware script with the key and certificate arguments pointing out the files you've created in your project root.
+  <ion-item>
+    <ion-icon name="download" slot="start"></ion-icon>
+    <ion-label>1 click away</ion-label>
+    <ion-button color="tertiary" slot="end">INSTALL</ion-button>
+  </ion-item>
 
-```
-node server/https.js localhost+2-key.pem localhost+2.pem
-```
-
-Now your secure local server should be up and running. Try to navigate to your app with https://localhost or https://127.0.0.1 urls.
-
-## Update npm scripts for easier node execution
-
-Open `package.json` file and add the following scripts right below `server` script:
-
-```json
-"server:https": "node server/https.js localhost+2-key.pem localhost+2.pem",
-"build:serve:https": "npm run build:prod",
-"postbuild:serve:https": "npm run server:https",
+  <ion-card-content>
+    By adding our app to your home screen you can enjoy browsing the app offline.
+  </ion-card-content>
+</ion-card>
 ```
 
-From now on, we will run the secure local server by executing `npm run server:https`
+> Feel free to customize the UI as you wish. 
+> You can use [`ion-card` docs](https://ionicframework.com/docs/api/card) and [`ionicons` website](https://ionicons.com/) to see what are your customization options in ionic.
 
-When we want to build for production and then serve it on a local server over HTTPS protocol, we're going to execute `npm run build:serve:https`
+<img width="505" alt="12-6-promotion-ui" src="https://user-images.githubusercontent.com/2641384/73658285-5b5ac180-4694-11ea-9258-4f936abfee8a.png">
 
-## Access to your secure local server on emulated mobile device
+As `beforeinstallprompt` is not available in Safari, the UI displayed above will never be shown on iOS platform.
 
-Launch your emulated mobile device using Android Studio AVD. Over the Chrome app in your emulated mobile device, navigate to https://10.0.2.2 address.
+Now that we have the install promotion UI in place, we need to add a click handler to it to re-trigger th install prompt event stashed in `deferredPrompt` property.
 
-You should be getting `Your connection is not private` error on Chrome.
+### Add a click handler to install promotion UI
 
-![SSL Error](https://user-images.githubusercontent.com/2641384/73658222-4716c480-4694-11ea-8d39-694239f06a3c.png)
+Add a click handler to `ion-card` element we've just added in `app.component.html` template and re-trigger install prompt event stashed in `deferredPrompt` property in `AppComponent` class.
 
-This is the expected behaviour because `mkcert` root certificate is not installed on the device yet.
+Extend `ion-card` element in `app.component.html` by adding the following click handler:
 
-Tap on `Advanced` and then tap again on `Proceed to 10.0.2.2 (unsafe)`.
-
-![Unsafe](https://user-images.githubusercontent.com/2641384/73658223-4716c480-4694-11ea-8cbb-f265db706f52.png)
-
-Now you can access to the app but since the connection is not safe, your service worker is not registered, and Chrome does not display `Add to home screen` bar. 
-
-Let's install the missing root certificate on emulated device to fix both of those issues.
-
-### Install mkcert root certificate on emulated device
-
-Execute the following script on your computer to locate the directory keeping the root certificate:
-
-```
-mkcert -CAROOT
+```html
+<ion-card (click)="showInstallPrompt()">
 ```
 
-Navigate to the folder keeping the root certificate and drag and drop the key and the cert files `rootCA-key.pem`, `rootCA.pem` to the emulated device. 
+Open `app.component.ts` file to add `showInstallPrompt()` method:
 
-Dragged files are uploaded to `Downloads` folder of the emulated device.
+```typescript
+showInstallPrompt() {
+  // Show the prompt
+  this.deferredPrompt.prompt();
 
-#### Install the certificate
+  // Wait for the user to respond to the prompt
+  this.deferredPrompt.userChoice
+    .then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        // Hide the install promotion UI as user just installed it
+        this.isInstallPromotionDisplayed = false;
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      this.deferredPrompt = null;
+    });
+}
+```
 
-Within the mobile device, navigate to:
+## Test the custom install promotion on device
 
-`Settings` > `Security & Location` > `Encryption & Credentials` > `Install from SD Card` > `Downloads` screen. 
+Run `npm run build:serve:https` to build the app for production and serve it on local server over HTTPS protocol. 
 
-![Uploaded files](https://user-images.githubusercontent.com/2641384/73658225-4716c480-4694-11ea-951e-96393dd718a5.png)
+After running the command, test the functionality on the emulated device. 
 
-Tap on `rootCA.pem` file to install the root certificate. Give any name to the cert and proceed with the installation.
-
-![Install root cert](https://user-images.githubusercontent.com/2641384/73658227-4716c480-4694-11ea-9903-a19fc3d2ce2f.png)
-
-### Test the secure protocol on emulated device
-
-On your emulated device, close the Chrome app and relaunch it. Then navigate to https://10.0.2.2 address. 
-
-![Test root cert](https://user-images.githubusercontent.com/2641384/73658232-47af5b00-4694-11ea-83c6-029c07e8c1eb.png)
-
-Now you can enjoy a secure connection on emulated device environment. You should see the mini A2HS bar showing up at the bottom of the screen.
-
-![Mini info bar](https://user-images.githubusercontent.com/2641384/73658260-5138c300-4694-11ea-935d-b5133022769e.png)
+You need to remove the previously installed app in order to test this functionality. The `beforeinstallprompt` event will not be fired if it's already installed on the device.
 
 ## Good to go 🎯
 
-Now you can continue to Step 12 -> [Test the A2HS functionality on Android](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-12/README.md).
+Now you can continue to Step 13 -> [Add maskable icons](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-13/README.md).
