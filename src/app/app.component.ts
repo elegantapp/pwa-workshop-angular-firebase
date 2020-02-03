@@ -78,6 +78,7 @@ export class AppComponent implements OnInit {
     this.subscribeToWebPush();
     this.subscribeToNotificationClicks();
     this.subscribeToPushMessages();
+    this.setExperimentalAppBadge();
   }
 
   handleAppUpdate() {
@@ -311,5 +312,13 @@ export class AppComponent implements OnInit {
 
   addPushUser(pushUser: PushUser) {
     return this.pushUsersCollection.doc(pushUser.subscription.keys.auth).set(pushUser, { merge: true });
+  }
+
+  setExperimentalAppBadge() {
+    if ('setExperimentalAppBadge' in navigator) {
+      const unreadCount = 4;
+      // @ts-ignore
+      navigator.setExperimentalAppBadge(unreadCount);
+    }
   }
 }
