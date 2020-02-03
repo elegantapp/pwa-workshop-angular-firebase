@@ -206,12 +206,25 @@ require('firebase/firestore');
 
   const pushUsersSnapshot = await pushUsersRef.get();
   const pushUsers = pushUsersSnapshot.docs;
+  let successCount = 0;
 
-  await Promise.all(pushUsers.map((sub) => {
-     return webpush.sendNotification(sub.data().subscription, JSON.stringify(notificationPayload));
-  }));
+  for (let i = 0; i < pushUsers.length; i++) {
+    try {
+      await webpush.sendNotification(pushUsers[i].data().subscription, JSON.stringify(notificationPayload));
+      successCount++;
+    } catch (error) {
+      if (error.body.includes('push subscription has unsubscribed')) {
+        await pushUsersRef.doc(pushUsers[i].data().subscription.keys.auth).delete();
+      } else {
+        console.log(e);
+      }
+    }
+  }
 
-  console.log(`Message sent to  ${pushUsersSnapshot.size} clients`);
+  console.log(`Message is sent to ${successCount} of ${pushUsersSnapshot.size} subscribers`);
+  if (pushUsersSnapshot.size - successCount > 0) {
+    console.log(`Removed ${pushUsersSnapshot.size - successCount} of expired subscriptions`);
+  }
   process.exit(0);
 })();
 ```
