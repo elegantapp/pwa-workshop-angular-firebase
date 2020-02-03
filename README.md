@@ -382,7 +382,9 @@ subscribeToNotificationClicks() {
 
     this.navigateOnNotificationClick(msg.action);
     // Hide the internal message when an action is tapped on system notification
-    this.notificationToast.dismiss();
+    if (this.notificationToast) {
+      this.notificationToast.dismiss();
+    }
   });
 }
 ```
