@@ -1,4 +1,5 @@
 <ion-app [class.dark-theme]="dark">
+  <ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
   <ion-split-pane contentId="main-content">
 
     <ion-menu contentId="main-content">
@@ -24,6 +25,28 @@
         <ion-card-content>
           By adding our app to your home screen you can enjoy browsing the app offline.
         </ion-card-content>
+      </ion-card>
+
+      <ion-card button
+                color="tertiary"
+                *ngIf="!isInstallPromotionDisplayed && Notification?.permission === 'default'"
+                (click)="requestNotificationPermission()">
+
+        <ion-card-header>
+          <ion-card-title>Enable notifications</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          Do not miss announcements from organizers and get reminders on your favorite sessions!
+        </ion-card-content>
+
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <img src="assets/img/ica-slidebox-img-2.png" alt="A fancy mobile device">
+          </ion-thumbnail>
+          <ion-button color="danger"><ion-icon name="notifications" slot="start"></ion-icon>REQUEST PERMISSION</ion-button>
+        </ion-item>
+
       </ion-card>
 
       <ion-content>
@@ -127,6 +150,18 @@
               Dark Theme
             </ion-label>
             <ion-toggle [(ngModel)]="dark"></ion-toggle>
+          </ion-item>
+        </ion-list>
+
+        <ion-list *ngIf="!isInstallPromotionDisplayed">
+          <ion-item lines="none">
+            <ion-label>
+              Notifications
+            </ion-label>
+            <ion-toggle disabled [checked]="Notification?.permission === 'granted'"></ion-toggle>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-note>Use browser settings to manage notifications.</ion-note>
           </ion-item>
         </ion-list>
       </ion-content>

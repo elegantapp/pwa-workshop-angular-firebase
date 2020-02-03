@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController, MenuController, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { UserData } from './providers/user-data';
-import { SwUpdate, UpdateAvailableEvent } from '@angular/service-worker';
+import { SwPush, SwUpdate, UpdateAvailableEvent } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +38,8 @@ export class AppComponent implements OnInit {
   dark = false;
   deferredPrompt;
   isInstallPromotionDisplayed = false;
+  showBackdrop = false;
+  Notification = Notification;
 
   constructor(
     private menu: MenuController,
@@ -46,6 +48,7 @@ export class AppComponent implements OnInit {
     private userData: UserData,
     private toastController: ToastController,
     private swUpdate: SwUpdate,
+    private swPush: SwPush,
     private alertController: AlertController,
   ) {}
 
@@ -55,6 +58,7 @@ export class AppComponent implements OnInit {
     await this.showIosInstallBanner();
     this.handleAppUpdate();
     this.hijackInstallPrompt();
+    this.subscribeToWebPush();
   }
 
   handleAppUpdate() {
@@ -165,6 +169,8 @@ export class AppComponent implements OnInit {
   }
 
   showInstallPrompt() {
+    this.showBackdrop = true;
+
     // Show the prompt
     this.deferredPrompt.prompt();
 
@@ -179,6 +185,47 @@ export class AppComponent implements OnInit {
           console.log('User dismissed the A2HS prompt');
         }
         this.deferredPrompt = null;
+        this.showBackdrop = false;
+      }).catch(() => {
+      this.showBackdrop = false;
+    });
+  }
+
+  subscribeToWebPush() {
+    if ('Notification' in window && Notification.permission === 'granted') {
+
+      this.swPush.requestSubscription({
+        serverPublicKey: 'firebase_web_push_public_vapid_key',
+      }).then((sub) => {
+        console.log('subscribeToWebPush successful');
+        console.log(JSON.stringify(sub));
+      }).catch((err) => {
+        console.log('subscribeToWebPush error', err);
       });
+    }
+
+  }
+
+  requestNotificationPermission() {
+    // We will use the backdrop to create user focus on permission dialog
+    this.showBackdrop = true;
+
+    if ('Notification' in window) {
+      Notification.requestPermission().then((permission: NotificationPermission) => {
+        this.showBackdrop = false;
+
+        if (permission === 'granted') {
+          console.log('Notification permission is granted');
+
+          // Since we have the permission now, let's subscribe to Web Push server
+          this.subscribeToWebPush();
+        } else {
+          console.log('Notification permission is not granted: ', permission);
+        }
+      }).catch((err) => {
+        console.log('Error on requestNotificationPermission', err);
+        this.showBackdrop = false;
+      });
+    }
   }
 }
