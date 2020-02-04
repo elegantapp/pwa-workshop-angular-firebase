@@ -129,6 +129,25 @@ addPushUser(pushUser: PushUser) {
 }
 ```
 
+Update `subscribeToWebPush()` method with the content below to call the new `addPushUser` method:
+```typescript
+subscribeToWebPush() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+
+    this.swPush.requestSubscription({
+      serverPublicKey: 'your-public-vapid-server-key',
+    }).then((sub) => {
+      const subscription = JSON.parse(JSON.stringify(sub));
+      console.log('subscribeToWebPush successful');
+      console.log(subscription);
+      this.addPushUser({ subscription });
+    }).catch((err) => {
+      console.log('subscribeToWebPush error', err);
+    });
+  }
+}
+```
+
 Normally, adding a new item as a document to our collection is as easy as calling `this.pushUsersCollection.add(pushUser)`. However, this creates a new document with a different doc id every time, with the same subscription data.
 
 By using `pushUser.subscription.keys.auth` variable as a document id and providing `merge: true` option, we make sure we don't have duplicate entries for the same subscription.
