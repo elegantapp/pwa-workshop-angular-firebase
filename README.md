@@ -50,14 +50,6 @@ Since we introduced a new service worker file, we need to change the fixed path 
 ServiceWorkerModule.register('main-sw.js', { enabled: environment.production })
 ```
 
-### BONUS: Push Notifications
-
-The idea of extending the NGSW is to be free with native service worker implementation, enabling us to interact with various Web APIs.
-
-One of those APIs is Web Push Notification API. **We will not cover push notifications during this workshop due to time limitation.** However, you can introduce them later via Firebase Cloud Messaging by following the instructions on [documentation here](https://firebase.google.com/docs/cloud-messaging/js/receive#handle_messages_when_your_web_app_is_in_the_foreground).
-
-Simply create a new file in `/src/sw` folder with the name `firebase-messaging-sw.js` as it's described in docs and continue with further steps. Our adjusted build setup is compatible with all the modifications you need to do for introducing push notifications. Do not forget importing `firebase-messaging-sw.js` to `main-sw.js` file, like we did for `ngsw-worker.js` earlier.
-
 ## Test the results
 
 Once you're done with the instructions, you can test it by building the app for production. 
