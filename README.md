@@ -16,11 +16,7 @@ Launch an emulated device on Android Studio AVD. Open Chrome on emulated mobile 
 
 <img width="508" alt="11-1-non-secure" src="https://user-images.githubusercontent.com/2641384/73658220-467e2e00-4694-11ea-9c1f-65637e106ec0.png">
 
-Open Chrome DevTools Remote Devices to inspect the remote mobile device. You should see the following error on your console.
-
-`Error: Service workers are disabled or not supported by this browser`
-
-<img width="869" alt="11-2-non-secure-sw" src="https://user-images.githubusercontent.com/2641384/73658221-467e2e00-4694-11ea-8303-3f7ef06fbe6a.png">
+Open Chrome DevTools Remote Devices to inspect the remote mobile device. You should see that there's no service worker attached to your client.
 
 ## Generate a local certificate
 
