@@ -50,7 +50,7 @@ Since we depend on Angular CLI and some other tools which are not available for 
 15. [Send and receive push notifications](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-15/README.md)
 16. [Save push subscriptions in a DB](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-16/README.md)
 17. [Use an API from project Fugu](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-17/README.md)
-Final. [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md)
+18. [What's next?](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/final/README.md)
 
 Once you're ready with your local environment, you can start the workshop by navigation to the first step -> [Add @angular/pwa schematic](https://github.com/onderceylan/pwa-workshop-angular-firebase/blob/step-1/README.md).
 
