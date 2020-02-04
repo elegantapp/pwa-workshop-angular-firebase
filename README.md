@@ -63,7 +63,7 @@ npm install firebase @angular/fire --save
 
 ```typescript
 firebase: {
-  projectId: 'pwa-workshop-angular-firebase'
+  projectId: 'your-project-id-from-firebase-console'
 }
 ```
 
