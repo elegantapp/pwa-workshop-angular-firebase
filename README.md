@@ -206,8 +206,6 @@ Tap on `rootCA.pem` file to install the root certificate. Give any name to the c
 
 On your emulated device, close the Chrome app and relaunch it. Then navigate to https://10.0.2.2 address. 
 
-<img width="512" alt="11-7-test-root-cert" src="https://user-images.githubusercontent.com/2641384/73658232-47af5b00-4694-11ea-83c6-029c07e8c1eb.png">
-
 Now you can enjoy a secure connection on emulated device environment. You should see the mini A2HS bar showing up at the bottom of the screen.
 
 <img width="522" alt="11-8-mini-info-bar" src="https://user-images.githubusercontent.com/2641384/73658260-5138c300-4694-11ea-935d-b5133022769e.png">
