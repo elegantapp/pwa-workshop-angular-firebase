@@ -35,6 +35,11 @@ brew install nss
 
 If you use another OS, see mkcert docs for installation guidelines: https://github.com/FiloSottile/mkcert
 
+Run the following to install the mkcert's root certificate for your system:
+```
+mkcert -install
+```
+
 ### Generate a key and certificate for our origins
 
 mkcert can generate a key and certificate to secure multiple origins. We're going to target `localhost`, `127.0.0.1`, and of course `10.0.2.2` origins. 
