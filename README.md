@@ -135,7 +135,7 @@ Asking for notification permissions immediately when your user visited your app 
 
 This behaviour has been used by many websites to spam their visitors for a long time and users have developed an immediate denial reaction against them in time. 
 
-There's a Lighthouse audit to increase the awareness against such developer action, documented as [Avoids Requesting The Notification Permission On Page Load](https://developers.google.com/web/tools/lighthouse/audits/notifications-on-load). Moreover, there will be a Chrome feaure implementation automatically preventing such behaviour soon.
+There's a Lighthouse audit to increase the awareness against such developer action, documented as [Avoids Requesting The Notification Permission On Page Load](https://developers.google.com/web/tools/lighthouse/audits/notifications-on-load). Moreover, there will be a Chrome feature implementation automatically preventing such behaviour soon.
 
 Any engagement with your users has to be meaningful and with a thorough reasoning, triggered by your users own action and consent. 
 
