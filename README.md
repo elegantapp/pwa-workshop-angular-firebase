@@ -20,7 +20,17 @@ Click `Finish` in order to make your project available on CLI, do not run the co
 
 ## Initialize firebase config
 
-You can deploy your PWA to Firebase for the first time by simply executing 3 commands via Firebase CLI; `login`, `init` and `deploy`. 
+You can deploy your PWA to Firebase for the first time by executing 3 commands via Firebase CLI; `login`, `init` and `deploy`.
+
+### Install Firebase CLI
+
+Let's install `Firebase CLI` if you haven't done already:
+
+```
+npm i -g firebase-tools
+``` 
+
+### Use CLI to init config
 
 We'll only make use of hosting service of Firebase for now. In order to do that, follow the instructions below;
 
