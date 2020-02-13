@@ -35,10 +35,10 @@ This will not only help us to keep variables secure, it will also help on config
 Create a new file with the name `.env` in your project's root folder. Add the following content to it:
 
 ```
-FIREBASE_SERVER_API_KEY="put-your-key-from-your-notes-here"
-FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY="put-your-key-from-your-notes-here"
-FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY="put-your-key-from-your-notes-here"
-EMAIL_FOR_SUBJECT="put-your-email-address-here"
+FIREBASE_SERVER_API_KEY="⚠️ PUT THE CORRESPONDING KEY FROM YOUR NOTEPAD HERE ⚠️"
+FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY="⚠️ PUT THE CORRESPONDING KEY FROM YOUR NOTEPAD HERE ⚠️"
+FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY="⚠️ PUT THE CORRESPONDING KEY FROM YOUR NOTEPAD HERE ⚠️"
+EMAIL_FOR_SUBJECT="PUT AN EMAIL HERE️"
 ```
 
 You should update the variables with the earlier notes you took.
@@ -55,37 +55,48 @@ Add the following code block to the new `sendPush.js` file:
 ```javascript
 const webpush = require('web-push');
 
-webpush.setGCMAPIKey(process.env.FIREBASE_SERVER_API_KEY);
-webpush.setVapidDetails(
-  `mailto:${process.env.EMAIL_FOR_SUBJECT}`,
-  process.env.FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY,
-  process.env.FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY
-);
+(async () => {
 
-// This is the output of calling JSON.stringify on a PushSubscription you receive on your client
-// Copy paste the console log of push subscription from the receiver client here
-const pushSubscription = {
-  endpoint: '...',
-  keys: {
-    auth: '...',
-    p256dh: '...'
+  webpush.setGCMAPIKey(process.env.FIREBASE_SERVER_API_KEY);
+  webpush.setVapidDetails(
+    `mailto:${process.env.EMAIL_FOR_SUBJECT}`,
+    process.env.FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY,
+    process.env.FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY
+  );
+
+  // This is the output of calling JSON.stringify on a PushSubscription you receive on your client
+  // Copy paste the console log of push subscription from the receiver client here
+  const pushSubscription = {
+    endpoint: '...',
+    keys: {
+      auth: '...',
+      p256dh: '...'
+    }
+  };
+
+  const notificationPayload = {
+    notification: {
+      title: 'Session is about the start 🏃‍♀️',
+      body: '"Community Interaction" by Gino Giraffe is starting in Hall 3.',
+      icon: 'assets/pwa/manifest-icon-192.png',
+      vibrate: [100, 50, 100],
+      data: {
+        dateOfArrival: Date.now(),
+      },
+      actions: []
+    }
+  };
+
+  try {
+    // Send the push notification
+    await webpush.sendNotification(pushSubscription, JSON.stringify(notificationPayload));
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
   }
-};
 
-const notificationPayload = {
-  notification: {
-    title: 'Session is about the start 🏃‍♀️',
-    body: '"Community Interaction" by Gino Giraffe is starting in Hall 3.',
-    icon: 'assets/pwa/manifest-icon-192.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-    },
-    actions: []
-  }
-};
-
-webpush.sendNotification(pushSubscription, JSON.stringify(notificationPayload));
+})();
 ```
 
 ### Send a push notification
@@ -130,7 +141,7 @@ We're going to provide the `action` data in a format of `actionType:id`. We'll b
 
 Open `sendPush.js` file and change the `actions` array in notification payload object with the following:
 
-```json
+```
 actions: [
   {
     action: 'session:10',
@@ -157,7 +168,7 @@ You should now see a notification with 2 actions, pushed to your device.
 
 Replace actions array with the following to experiment with the `text` action type.
 
-```json
+```
 actions: [
   {
     action: 'reply',
