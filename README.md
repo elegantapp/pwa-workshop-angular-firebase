@@ -119,14 +119,15 @@ You can manage the permissions of your browser for testing purposes by pasting t
 > 
 > You need to inform and guide your users on enabling the notifications once again, using [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission).
 
-## Add GCM id to your manifest file
+## Add 
+id to your manifest file
 
 Although the need for `gcm_sender_id` in manifest file is deprecated for Chrome, it is still [required for Chrome prior to version 52, Opera Android, and Samsung Internet](https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#sending_a_push_message_using_firebase_cloud_messaging).
 
 Copy `GCM_SENDER_ID` key from you notepad of keys and paste it to your `manifest.webmanifest` file:
 
 ```json
-"gcm_sender_id": "yourId"
+"gcm_sender_id": "⚠️ PUT YOUR GCM_SENDER_ID HERE ⚠️"
 ```
 
 ## Setup a good permission UX
