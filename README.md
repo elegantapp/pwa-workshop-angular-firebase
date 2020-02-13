@@ -59,11 +59,15 @@ npm install firebase @angular/fire --save
 
 `@angular/fire` requires a specific project configuration as it's described on it's [Install and Setup docs](https://github.com/angular/angularfire/blob/master/docs/install-and-setup.md).
 
-* Open `environment.ts` and `environment.prod.ts` files and add the following config to the env object, setting your firebase project id:
+* Navigate to `Firebase Console` to copy your project id.
+
+<img width="1038" alt="project-id" src="https://user-images.githubusercontent.com/2641384/74479818-275f7780-4eb0-11ea-9c5f-d7ccff9d8127.png"> 
+
+* Open `environment.ts` and `environment.prod.ts` files and add the following config to the env object, pasting your firebase project id:
 
 ```typescript
 firebase: {
-  projectId: 'your-project-id-from-firebase-console'
+  projectId: '⚠️ PUT YOUT FIREBASE PROJECT ID HERE ⚠️'
 }
 ```
 
@@ -135,7 +139,7 @@ subscribeToWebPush() {
   if ('Notification' in window && Notification.permission === 'granted') {
 
     this.swPush.requestSubscription({
-      serverPublicKey: 'your-public-vapid-server-key',
+      serverPublicKey: `⚠️ PUT YOUR FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY HERE ⚠️`,
     }).then((sub) => {
       const subscription = JSON.parse(JSON.stringify(sub));
       console.log('subscribeToWebPush successful');
@@ -169,8 +173,8 @@ We still need to update our `sendPush.js` script to send the push notifications 
 
 Open `.env` file and add the following environment variables:
 
-```typescript
-FIREBASE_PROJECT_ID="pwa-workshop-angular-firebase"
+```
+FIREBASE_PROJECT_ID="⚠️ PUT YOUT FIREBASE PROJECT ID HERE ⚠️"
 FIREBASE_FIRESTORE_COLLECTION_NAME="pushUsers"
 ```
 
