@@ -22,11 +22,13 @@ Navigate to `Project Settings` > `Cloud Messaging` tab in your Firebase console.
 
 <img width="509" alt="14-1-fire-project-settings" src="https://user-images.githubusercontent.com/2641384/73658317-69104700-4694-11ea-89f3-77e71d420e27.png">
 
-Click on `Add server key` button. Copy and paste this key to your notes, `firebase-server-api-key={yourKey}`.
+Click on `Add server key` button. 
+
+⚠️ Copy the `Server key` to your notepad, assigning a reference name to it for future references: `FIREBASE_SERVER_API_KEY: {yourKey}`.
 
 <img width="684" alt="14-2-fire-add-server-key" src="https://user-images.githubusercontent.com/2641384/73658318-6a417400-4694-11ea-8224-eec8b834ede7.png">
 
-Copy the `Sender ID` to your notes `gcm-sender-id={yourId}`.
+⚠️ Copy the `Sender ID` to your notepad, assigning a reference name to it for future references: `GCM_SENDER_ID: {yourId}`.
 
 ### Generate Web Push certificate
 
@@ -34,7 +36,9 @@ Within the `Cloud Messaging` tab in your Firebase console, scroll down to `Web c
 
 <img width="667" alt="14-3-fire-web-push-gen" src="https://user-images.githubusercontent.com/2641384/73658319-6ada0a80-4694-11ea-995d-ae1164e8d02a.png">
 
-Click on `Generate key pair` button. Copy and paste this key to your notes, `firebase-web-push-public-vapid-key={yourKey}`.
+Click on `Generate key pair` button. 
+
+⚠️ Copy the shown `Public key` to your notepad, assigning a reference name to it for future references: `FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY: {yourKey}`.
 
 <img width="677" alt="14-4-fire-copy-public-key" src="https://user-images.githubusercontent.com/2641384/73658320-6ada0a80-4694-11ea-8fe5-ca94c951a24c.png">
 
@@ -42,9 +46,9 @@ Click on the three dots button when hovered on the public key to see the options
 
 <img width="555" alt="14-5-fire-copy-private-key" src="https://user-images.githubusercontent.com/2641384/73658321-6ada0a80-4694-11ea-8533-6b858cd6db23.png">
 
-Copy and paste this key to your notes, `firebase-web-push-private-vapid-key={yourKey}`.
+⚠️ Copy the shown `Private key` to your notepad, assigning a reference name to it for future references: `FIREBASE_WEB_PUSH_PRIVATE_VAPID_KEY: {yourKey}`.
 
-> It's very important to note that, keys we noted at this step should be secret, especially the private one. Having them exposed to outside world might cause a breach to your app, letting anyone who has them to send any message they want to your users.
+> It's very important to note that, private keys we noted at this step should be secret. Having them exposed to outside world might cause a breach to your app, letting anyone who has them to send any message they want to your users.
 > 
 > I intentionally did not obfuscate the keys in the images, but rest assured, they're all invalidated :)
 
@@ -70,12 +74,12 @@ export class AppComponent implements OnInit {
 
 Again, in your `app.component.ts` file, add the following method to request permission for push notifications and subscribe to the remote Web Push service.
 
-Use `firebase-web-push-public-vapid-key` from your notes of keys as a value for `serverPublicKey` option.
+Copy `FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY` from your notepad of keys as a value for `serverPublicKey` option.
 
 ```typescript
 subscribeToWebPush() {
   this.swPush.requestSubscription({
-    serverPublicKey: `${firebase_web_push_public_vapid_key}`,
+    serverPublicKey: `⚠️ PUT YOUR FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY HERE ⚠️`,
   }).then((sub) => {
     console.log('subscribeToWebPush successful');
     console.log(JSON.stringify(sub));
@@ -119,8 +123,7 @@ You can manage the permissions of your browser for testing purposes by pasting t
 
 Although the need for `gcm_sender_id` in manifest file is deprecated for Chrome, it is still [required for Chrome prior to version 52, Opera Android, and Samsung Internet](https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#sending_a_push_message_using_firebase_cloud_messaging).
 
-
-Copy `gcm-sender-id` from you notes and paste it to your `manifest.webmanifest` file:
+Copy `GCM_SENDER_ID` key from you notepad of keys and paste it to your `manifest.webmanifest` file:
 
 ```json
 "gcm_sender_id": "yourId"
@@ -162,7 +165,7 @@ subscribeToWebPush() {
   if ('Notification' in window && Notification.permission === 'granted') {
   
     this.swPush.requestSubscription({
-      serverPublicKey: `${firebase_web_push_public_vapid_key}`,
+      serverPublicKey: `⚠️ PUT YOUR FIREBASE_WEB_PUSH_PUBLIC_VAPID_KEY HERE ⚠️`,
     }).then((sub) => {
       console.log('subscribeToWebPush successful');
       console.log(JSON.stringify(sub));
