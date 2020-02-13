@@ -24,6 +24,8 @@ Tap on `Update Chrome`.
 
 <img width="513" alt="12-3-update-chrome" src="https://user-images.githubusercontent.com/2641384/73658281-5ac22b00-4694-11ea-8960-d6bfd9ec4fc7.png">
 
+### Sign in to update Chrome
+
 You need to sign in with your Google account to the Play Store in order to update Chrome on the emulated device. Do login with your account and finalize the installation of the Chrome update.
 
 ## Re-test the A2HS functionality
