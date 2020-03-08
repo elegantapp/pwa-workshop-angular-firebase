@@ -12,7 +12,9 @@ The end application is purely a kitchen-sink demo of a PWA based on Ionic Framew
 
 **We will not use Ionic for building a hybrid mobile app, but instead we will use it for building a PWA!**
 
-![Ionic Conf App](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/SchedulePage.png)
+| Material Design  | iOS  |
+| -----------------| -----|
+| ![Android Schedule](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/android-schedule.png) | ![iOS Schedule](https://github.com/ionic-team/ionic-conference-app/raw/master/resources/screenshots/ios-schedule.png) |
 
 ## How this workshop works?
 
