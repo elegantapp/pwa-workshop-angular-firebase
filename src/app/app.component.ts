@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Speakers',
       url: '/app/tabs/speakers',
-      icon: 'contacts'
+      icon: 'people'
     },
     {
       title: 'Map',
@@ -122,14 +122,16 @@ export class AppComponent implements OnInit {
     // Checks if it should display install popup notification
     if (isIos() && !isInStandaloneMode() && isBannerShown == null) {
       const toast = await this.toastController.create({
-        showCloseButton: true,
-        closeButtonText: 'OK',
+        buttons: [{
+          text: 'OK',
+          role: 'cancel'
+        }],
         cssClass: 'custom-toast',
         position: 'bottom',
         message: `To install the app, tap "Share" icon below and select "Add to Home Screen".`,
       });
-      toast.present();
-      this.storage.set('isBannerShown', true);
+      await toast.present();
+      await this.storage.set('isBannerShown', true);
     }
   }
 
@@ -288,7 +290,6 @@ export class AppComponent implements OnInit {
       // Only display the toast message if the app is in the foreground
       if (document.visibilityState === 'visible') {
         const toast = this.toastController.create({
-          showCloseButton: false,
           duration: 10000,
           cssClass: 'custom-toast',
           position: 'top',
