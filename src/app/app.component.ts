@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Speakers',
       url: '/app/tabs/speakers',
-      icon: 'contacts'
+      icon: 'people'
     },
     {
       title: 'Map',
