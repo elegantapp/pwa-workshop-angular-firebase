@@ -32,9 +32,10 @@ Participate in the [Web Capabilities codelab](https://codelabs.developers.google
 
 ### Explore further Web APIs
 
-[Check out the Web Payments API implementation of mine](https://github.com/LINKIT-Group/itnext-summit-app/blob/master/src/app/utils/ticket-sale.ts) and try to introduce the same feature to your app!
+* You can see the full list of new and potential capabilities at the [Fugu API Tracker](https://goo.gle/fugu-api-tracker).
+* [Check out the Web Payments API implementation of mine](https://github.com/LINKIT-Group/itnext-summit-app/blob/master/src/app/utils/ticket-sale.ts) and try to introduce the same feature to your app!
+* Furthermore, check out https://tomayac.github.io/pwa-feature-detector/ and https://whatwebcando.today/ to see some great set of Web APIs and introduce the ones that are interesting to you and to this app.
 
-Furthermore, check out https://tomayac.github.io/pwa-feature-detector/ and https://whatwebcando.today/ to see some great set of Web APIs and introduce the ones that are interesting to you to this app.
 
 ### Keep in contact
 
