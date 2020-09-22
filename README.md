@@ -21,6 +21,9 @@ export interface DataGroup {
     timeout?: string;
     strategy?: 'freshness' | 'performance';
   };
+  cacheQueryOptions?: {
+    ignoreSearch?: boolean;
+  };
 }
 ```
 
