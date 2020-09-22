@@ -5,7 +5,7 @@ The first thing you need to do on your existing Angular app to transform it into
 Simply run **add** command on your Angular CLI.
 
 ```bash
-npm run ng add @angular/pwa
+npx ng add @angular/pwa
 ```
 
 ## Acknowledge local changes
