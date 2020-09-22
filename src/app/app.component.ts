@@ -271,7 +271,6 @@ export class AppComponent implements OnInit {
       // Only display the toast message if the app is in the foreground
       if (document.visibilityState === 'visible') {
         const toast = this.toastController.create({
-          showCloseButton: false,
           duration: 10000,
           cssClass: 'custom-toast',
           position: 'top',
