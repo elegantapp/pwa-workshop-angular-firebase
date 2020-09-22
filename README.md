@@ -56,7 +56,7 @@ We can use `ToastController` of Ionic for displaying the message. Simply open `a
 
 Create a new function called showIosInstallBanner and do all the checks mentioned above. Then display the message by calling toast controller as the example below;
 
-```javascript
+```typescript
 import { ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
@@ -68,18 +68,20 @@ async ngOnInit() {
 }
 
 async showIosInstallBanner() {
-  // Put the functions for assertion here
+  // Put the function declarations of below calls here
   
   if (isIos() && !isInStandaloneMode() && isBannerShown == null) {
     const toast = await this.toastController.create({
-      showCloseButton: true,
-      closeButtonText: 'OK',
-      cssClass: 'your-class-here-if-need-to-customize',
+      buttons: [{
+        text: 'OK',
+        role: 'cancel'
+      }],
+      cssClass: 'custom-toast',
       position: 'bottom',
       message: `To install the app, tap "Share" icon below and select "Add to Home Screen".`,
     });
-    toast.present();
-    this.storage.set('isBannerShown', true);
+    await toast.present();
+    await this.storage.set('isBannerShown', true);
   }
 }
 ```
