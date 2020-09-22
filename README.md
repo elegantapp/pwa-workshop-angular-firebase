@@ -19,6 +19,9 @@ interface AssetGroup {
     files?: string[];
     urls?: string[];
   };
+  cacheQueryOptions?: {
+    ignoreSearch?: boolean;
+  };
 }
 ```
 
