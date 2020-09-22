@@ -4,19 +4,21 @@
   "theme_color": "#387ef5",
   "background_color": "#ffffff",
   "display": "standalone",
-  "scope": "/",
-  "start_url": "/?utm_source=home_screen",
+  "scope": "./",
+  "start_url": "./?utm_source=home_screen",
   "description": "This is a dummy Angular app which demonstrates a PWA's behaviour on different platforms.",
   "icons": [
     {
       "src": "assets/pwa/manifest-icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "assets/pwa/manifest-icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
