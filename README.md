@@ -34,7 +34,7 @@ It is a good practice to add a query string to the end of the `start_url` field 
 
 ```
 {
-  "start_url": "/?utm_source=home_screen"
+  "start_url": "./?utm_source=home_screen"
 }
 ```
 
